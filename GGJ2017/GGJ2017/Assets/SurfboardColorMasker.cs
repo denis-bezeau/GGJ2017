@@ -5,15 +5,7 @@ using UnityEngine.UI;
 
 public class SurfboardColorMasker : MonoBehaviour
 {
-	public enum SURFBOARDCOLOR
-	{
-		BLUE,
-		RED,
-		GREEN,
-		YELLOW
-	}
-
-	public SURFBOARDCOLOR eColor = SURFBOARDCOLOR.BLUE;
+	public GGJ2017GameManager.SURFBOARDCOLOR eColor = GGJ2017GameManager.SURFBOARDCOLOR.BLUE;
 
 	private float m_fCurrentHeight = 0.0f;
 	

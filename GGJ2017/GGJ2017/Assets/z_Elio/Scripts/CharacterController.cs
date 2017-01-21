@@ -12,6 +12,7 @@ public class CharacterController : MonoBehaviour
     private float waveTime;
     private float waveAmp = .25f;
     private float waveFrequency = 1f;
+	private bool m_bJumping = false;
 
     private static Vector2 CHARACTER_ORIGIN_POSITION = new Vector2(-20, 0);
 
@@ -53,6 +54,7 @@ public class CharacterController : MonoBehaviour
         if (jump != KeyCode.Alpha0 && Input.GetKeyDown(jump))
         {
             Debug.Log("CharacterController: Update: "+ instance +": jump");
+			m_bJumping = true;
         }
 	}
 
@@ -76,6 +78,23 @@ public class CharacterController : MonoBehaviour
         waveTime += Time.deltaTime;
         particle.transform.position = new Vector3(particle.transform.position.x, particle.transform.position.y + waveAmp * Mathf.Sin((waveTime % 1) * (waveFrequency * 2) * Mathf.PI), particle.transform.position.z);
     }
+
+	public bool IsCrouching()
+	{
+		return false;// m_bCrouching;
+	}
+
+	public bool IsJumping()
+	{
+		return m_bJumping;
+	}
+
+	public Vector2 GetVelocity()
+	{
+		//return rigidBody.velocity;
+		return Vector2.right * 100;
+	}
+
 
     /*
     public void CreateParticles()

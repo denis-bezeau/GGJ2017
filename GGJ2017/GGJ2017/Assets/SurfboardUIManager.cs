@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SetPowerEvent : CTEvent
 {
-	public SurfboardColorMasker.SURFBOARDCOLOR color;
+	public GGJ2017GameManager.SURFBOARDCOLOR color;
 	public float value;
 }
 
