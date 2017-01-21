@@ -4,34 +4,41 @@
 //Collision control
 public class CharacterController : MonoBehaviour
 {
+    private float JUMP_TIME_LIMIT = 1f;
+
+    private string MAIN_LOCATION = "Spawn";
+    private string JUMP_LOCATION = "OutOfWay";
+
     private GameObject particle;
+    private KeyCode m_kcJumpKey = KeyCode.Alpha0;
+    private int m_iInstance;
 
-    private KeyCode jump = KeyCode.Alpha0;
-    private int instance;
+    private float m_fTime;
+    private float m_fMoveSpeed = 1f;
+    private float m_fJumpTimer;
+    private float m_fWaveAmp = 2f;
+    private float m_fWaveFrequency = 2f; //Speed limit is 15 freq is 5
 
-    private float waveTime;
-    private float waveAmp = .25f;
-    private float waveFrequency = 1f;
-	private bool m_bJumping = false;
+    private GameObject m_goTargetPosition;
 
-    private static Vector2 CHARACTER_ORIGIN_POSITION = new Vector2(-20, 0);
+    private bool m_bJumping = false;
+    private bool m_bResting = true;
 
     public void CreateCharacterController(KeyCode jumpIn, int instanceIn)
     {
         particle = Instantiate(Resources.Load("Particle")) as GameObject;
         particle.gameObject.transform.parent = gameObject.transform;
 
-        //CreateParticles();
-
-        jump = jumpIn;
-        instance = instanceIn;
+        m_kcJumpKey = jumpIn;
+        m_iInstance = instanceIn;
     }
 
     public void PositionCharacter(int totalCharacters)
     {
         if(totalCharacters == 1) //Hack
         {
-            this.gameObject.transform.position = CHARACTER_ORIGIN_POSITION;
+            m_goTargetPosition = GameObject.Find("Spawn");
+            this.gameObject.transform.position = m_goTargetPosition.transform.position;
         }
     }
 
@@ -49,18 +56,53 @@ public class CharacterController : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
+        Debug.Log("CharacterController: Update:");
         ParticleMotion();
 
-        if (jump != KeyCode.Alpha0 && Input.GetKeyDown(jump))
+        if (m_kcJumpKey != KeyCode.Alpha0)
         {
-            Debug.Log("CharacterController: Update: "+ instance +": jump");
-			m_bJumping = true;
+            Debug.Log("CharacterController: Update: " + m_iInstance + ": jump");
+            bool bJumpInput = Input.GetKey(m_kcJumpKey);
+
+            if (m_bJumping && m_bResting)
+            {
+                m_fJumpTimer += Time.deltaTime;
+                Debug.Log("CharacterController: Update: m_fJumpTimer: " + m_fJumpTimer);
+
+                if (m_fJumpTimer > JUMP_TIME_LIMIT)
+                {
+                    Debug.Log("CharacterController: Update: reset timer");
+                    bJumpInput = false;
+                }
+            }
+
+            GoToLane(bJumpInput);
+        }
+
+        if (transform.position != m_goTargetPosition.transform.position)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, m_goTargetPosition.transform.position, m_fMoveSpeed);
+        }
+        else if(!m_bResting)
+        {
+            m_bResting = true;
+        }
+
+        if (m_bJumping && m_bResting)
+        {
+            m_fJumpTimer += Time.deltaTime;
+            Debug.Log("CharacterController: Update: m_fJumpTimer: " + m_fJumpTimer);
+            if (m_fJumpTimer > JUMP_TIME_LIMIT)
+            {
+                Debug.Log("CharacterController: Update: reset timer");
+                GoToLane(!m_bJumping);
+            }
         }
 	}
 
     void OnTriggerEnter2D(Collider2D col)
     {
-
+        Debug.Log("TRIGGERED O_O");
     }
 
     void OnTriggerStay2D(Collider2D col)
@@ -73,10 +115,40 @@ public class CharacterController : MonoBehaviour
 
     }
 
+    private void GoToLane(bool bLane)
+    {
+        string sLoc = "";
+        switch (bLane)
+        {
+            default:
+            case false:
+                sLoc = MAIN_LOCATION;
+                break;
+            case true:
+                sLoc = JUMP_LOCATION;
+                m_bJumping = true;
+                break;
+        }
+        if (m_bResting)
+        {
+            if(GameObject.Find(sLoc) != m_goTargetPosition)
+            {
+                m_bResting = false;
+                m_goTargetPosition = GameObject.Find(sLoc);
+            }
+
+            if(!bLane && GameObject.Find(sLoc) == m_goTargetPosition)
+            {
+                m_bJumping = false;
+                m_fJumpTimer = 0;
+            }
+        }
+    }
+
     private void ParticleMotion()
     {
-        waveTime += Time.deltaTime;
-        particle.transform.position = new Vector3(particle.transform.position.x, particle.transform.position.y + waveAmp * Mathf.Sin((waveTime % 1) * (waveFrequency * 2) * Mathf.PI), particle.transform.position.z);
+        m_fTime += Time.deltaTime;
+        particle.transform.position = new Vector3(transform.position.x, transform.position.y + m_fWaveAmp * Mathf.Sin((m_fTime % 1) * (m_fWaveFrequency * 2) * Mathf.PI), transform.position.z);
     }
 
 	public bool IsCrouching()

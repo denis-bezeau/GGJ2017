@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Game : MonoBehaviour
 {
-    public static KeyCode COLOR_1 = KeyCode.A;
-    public static KeyCode COLOR_2 = KeyCode.S;
+    public static KeyCode COLOR_1 = KeyCode.W;
+    public static KeyCode COLOR_2 = KeyCode.A;
     public static KeyCode COLOR_3 = KeyCode.D;
 
     public static int SINGLE_PLAYER_GAME = 0;
