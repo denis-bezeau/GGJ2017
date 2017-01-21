@@ -2,15 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SurfboardUIManager : MonoBehaviour {
+public class SetPowerEvent : CTEvent
+{
+	public SurfboardColorMasker.SURFBOARDCOLOR color;
+	public float value;
+}
 
-	// Use this for initialization
-	void Start () {
-		
+public class SurfboardUIManager : MonoBehaviour
+{
+	private SurfboardColorMasker[] m_dSurfboardDictionary;
+
+	public void Awake()
+	{
+		m_dSurfboardDictionary = GetComponentsInChildren<SurfboardColorMasker>();
+		CTEventManager.AddListener<SetPowerEvent>(SetPower);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+
+	public void OnDestroy()
+	{
+		CTEventManager.RemoveListener<SetPowerEvent>(SetPower);
+	}
+
+
+	public void SetPower(SetPowerEvent eventData)
+	{
+		foreach (SurfboardColorMasker sbcm in m_dSurfboardDictionary)
+		{
+			if (sbcm.eColor == eventData.color)
+			{
+				sbcm.SetHeight(eventData.value);
+			}
+		}
 	}
 }

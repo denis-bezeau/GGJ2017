@@ -5,7 +5,16 @@ using UnityEngine.UI;
 
 public class SurfboardColorMasker : MonoBehaviour
 {
-	
+	public enum SURFBOARDCOLOR
+	{
+		BLUE,
+		RED,
+		GREEN,
+		YELLOW
+	}
+
+	public SURFBOARDCOLOR eColor = SURFBOARDCOLOR.BLUE;
+
 	private float m_fCurrentHeight = 0.0f;
 	
 	private float m_fTimer = 0.0f;
@@ -57,7 +66,7 @@ public class SurfboardColorMasker : MonoBehaviour
 
 		if(Input.GetKeyDown(KeyCode.Space))
 		{
-			SetHeight(Random.Range(0.0f, 1.0f));
+			CTEventManager.FireEvent(new SetPowerEvent() { color = eColor, value = Random.Range(0.0f, 1.0f) });
 		}
 	}
 }

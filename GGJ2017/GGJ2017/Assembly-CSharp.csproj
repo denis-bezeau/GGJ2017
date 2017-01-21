@@ -50,6 +50,11 @@
      <Compile Include="Assets\Scripts\Art Scripts\ParallaxWave.cs" />
      <Compile Include="Assets\Scripts\Art Scripts\WaveRoller.cs" />
      <Compile Include="Assets\Scripts\Art Scripts\WaveRow.cs" />
+     <Compile Include="Assets\Scripts\EventSystem\CTEvent.cs" />
+     <Compile Include="Assets\Scripts\EventSystem\CTEventManager.cs" />
+     <Compile Include="Assets\Scripts\EventSystem\example\EventSystemTest.cs" />
+     <Compile Include="Assets\Scripts\Sound\ExampleScene\SoundSystemTest.cs" />
+     <Compile Include="Assets\Scripts\Sound\SoundManager.cs" />
      <Compile Include="Assets\SurfboardColorMasker.cs" />
      <Compile Include="Assets\SurfboardUIManager.cs" />
      <Compile Include="Assets\gg2016 REFERENCE\FishSpawner.cs" />
