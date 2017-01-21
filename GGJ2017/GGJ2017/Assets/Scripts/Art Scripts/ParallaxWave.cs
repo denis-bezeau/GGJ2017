@@ -5,7 +5,7 @@ using UnityEngine;
 public class ParallaxWave : MonoBehaviour
 {
 	public List<WaveRow> waveRows = new List<WaveRow>();
-	public int ScreenMinX = -500;
+	private int ScreenMinX = -200;
 	public Vector3 m_v3MoveDirection = Vector3.left;
 	public float m_fMoveSpeed = 1.0f;
 	public SortingLayer m_iSortingLayer;

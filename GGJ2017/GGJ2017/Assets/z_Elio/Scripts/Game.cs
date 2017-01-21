@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Game : MonoBehaviour
 {
-    public static KeyCode COLOR_1 = KeyCode.W;
-    public static KeyCode COLOR_2 = KeyCode.A;
+    public static KeyCode COLOR_1 = KeyCode.A;
+    public static KeyCode COLOR_2 = KeyCode.S;
     public static KeyCode COLOR_3 = KeyCode.D;
 
     public static int SINGLE_PLAYER_GAME = 0;
@@ -33,7 +33,14 @@ public class Game : MonoBehaviour
             Debug.Log("Game: Awake: game is not null destroy this instance");
             Destroy(this.gameObject);
         }
+
+		CTEventManager.AddListener<SpawnNewSurferEvent>(OnSpawnNewSurfer);
     }
+
+	public void OnDestroy()
+	{
+		CTEventManager.RemoveListener<SpawnNewSurferEvent>(OnSpawnNewSurfer);
+	}
 
 	// Use this for initialization
 	void Start ()
@@ -63,5 +70,13 @@ public class Game : MonoBehaviour
 	void Update ()
     {
 		
+	}
+
+	public void OnSpawnNewSurfer(SpawnNewSurferEvent eventData)
+	{
+		GameObject goCharacter;
+		CharacterController cCharacterController;
+		goCharacter = Instantiate(Resources.Load("Player")) as GameObject;
+		cCharacterController = goCharacter.AddComponent<CharacterController>();
 	}
 }
