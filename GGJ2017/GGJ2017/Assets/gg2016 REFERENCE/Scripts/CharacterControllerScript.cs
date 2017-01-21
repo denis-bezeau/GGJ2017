@@ -76,6 +76,11 @@ public class CharacterControllerScript : MonoBehaviour {
             m_bJumping = false;
     }
 
+	public Vector2 GetVelocity()
+	{
+		return rigidBody.velocity;
+	}
+
     public void FinishCollision()
     {
         GameManager.GetInstance().LevelUp();

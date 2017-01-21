@@ -46,6 +46,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\AnimationScripts\CharacterStateAnimator.cs" />
+     <Compile Include="Assets\Scripts\Art Scripts\ParallaxWave.cs" />
+     <Compile Include="Assets\Scripts\Art Scripts\WaveRoller.cs" />
+     <Compile Include="Assets\Scripts\Art Scripts\WaveRow.cs" />
+     <Compile Include="Assets\SurfboardColorMasker.cs" />
+     <Compile Include="Assets\SurfboardUIManager.cs" />
      <Compile Include="Assets\gg2016 REFERENCE\FishSpawner.cs" />
      <Compile Include="Assets\gg2016 REFERENCE\Meteor.cs" />
      <Compile Include="Assets\gg2016 REFERENCE\MeteorSpawner.cs" />
@@ -60,9 +66,6 @@
      <Compile Include="Assets\gg2016 REFERENCE\Scripts\MovingPlatform.cs" />
      <Compile Include="Assets\gg2016 REFERENCE\Scripts\Parralax.cs" />
      <Compile Include="Assets\gg2016 REFERENCE\mainmenu.cs" />
- <Reference Include="UnityEngine.Advertisements">
- <HintPath>E:/Unity5/Editor/Data/UnityExtensions/Unity/Advertisements/UnityEngine.Advertisements.dll</HintPath>
- </Reference>
  <Reference Include="UnityEngine.UI">
  <HintPath>E:/Unity5/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
@@ -77,9 +80,6 @@
  </Reference>
  <Reference Include="UnityEngine.HoloLens">
  <HintPath>E:/Unity5/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
- </Reference>
- <Reference Include="UnityEngine.Purchasing">
- <HintPath>E:/Unity5/Editor/Data/UnityExtensions/Unity/UnityPurchasing/UnityEngine.Purchasing.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.VR">
  <HintPath>E:/Unity5/Editor/Data/UnityExtensions/Unity/UnityVR/RuntimeEditor/UnityEngine.VR.dll</HintPath>
