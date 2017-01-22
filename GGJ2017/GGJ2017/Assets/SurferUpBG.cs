@@ -11,13 +11,17 @@ public class SurferUpBG : MonoBehaviour {
 
 	void Start ()
 	{
+        List<GGJ2017GameManager.SURFBOARDCOLOR> colors = GGJ2017GameManager.m_dTotalColors;
+        m_eColor = colors[Random.Range(0, colors.Count)];
+        BackgroundSprite.color = GGJ2017GameManager.m_dSurfboardColorToColor[m_eColor];
+        /*
 		switch (m_eColor)
 		{
 			case GGJ2017GameManager.SURFBOARDCOLOR.BLUE: BackgroundSprite.color = Color.blue; break;
 			case GGJ2017GameManager.SURFBOARDCOLOR.RED: BackgroundSprite.color = Color.red; break;
 			case GGJ2017GameManager.SURFBOARDCOLOR.GREEN: BackgroundSprite.color = Color.green; break;
             default: break;
-		}
+		}//*/
 	}
 	
 	// Update is called once per frame

@@ -45,7 +45,7 @@ public class GGJ2017GameManager : MonoBehaviour
     static GGJ2017GameManager instance;
 
     public static List<Color> m_lPossibleColors = new List<Color>();
-    private List<SURFBOARDCOLOR> m_dTotalColors = new List<SURFBOARDCOLOR>();
+    public static List<SURFBOARDCOLOR> m_dTotalColors = new List<SURFBOARDCOLOR>();
     private Dictionary<SURFBOARDCOLOR, float> m_dPowerLevels = new Dictionary<SURFBOARDCOLOR, float>();
     private Dictionary<SURFBOARDCOLOR, float> m_dTotalPowerLevels = new Dictionary<SURFBOARDCOLOR, float>();
     public static Dictionary<SURFBOARDCOLOR, Color> m_dSurfboardColorToColor = new Dictionary<SURFBOARDCOLOR, Color>();
@@ -68,6 +68,10 @@ public class GGJ2017GameManager : MonoBehaviour
         m_dSurfboardColorToColor.Add(SURFBOARDCOLOR.BLUE, Color.blue);
         m_dSurfboardColorToColor.Add(SURFBOARDCOLOR.RED, Color.red);
         m_dSurfboardColorToColor.Add(SURFBOARDCOLOR.GREEN, Color.green);
+
+        m_dTotalColors.Add(SURFBOARDCOLOR.BLUE);
+        m_dTotalColors.Add(SURFBOARDCOLOR.RED);
+        m_dTotalColors.Add(SURFBOARDCOLOR.GREEN);
 
         CreateColorList();
         ResetPowerLevels();
@@ -101,14 +105,11 @@ public class GGJ2017GameManager : MonoBehaviour
 
     public void ResetPowerLevels(ResetEvent eventData = null)
     {
-        Debug.Log("Reset");
-        m_dTotalColors.Clear();
+        //Debug.Log("Reset");
         m_dPowerLevels = new Dictionary<SURFBOARDCOLOR, float>();
         m_dTotalPowerLevels = new Dictionary<SURFBOARDCOLOR, float>();
 
-        m_dTotalColors.Add(SURFBOARDCOLOR.BLUE);
-        m_dTotalColors.Add(SURFBOARDCOLOR.RED);
-        m_dTotalColors.Add(SURFBOARDCOLOR.GREEN);
+        
 
         int idx;
         SURFBOARDCOLOR curColor;

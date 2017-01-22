@@ -92,7 +92,7 @@ public class Checkpoint : MonoBehaviour
             return;
         }
 
-        Debug.Log("CheckPoint: redraw: color: " + m_cCPColor);
+        //Debug.Log("CheckPoint: redraw: color: " + m_cCPColor);
         m_goLeftChild.GetComponent<SpriteRenderer>().color = m_cCPColor;
         m_goRightChild.GetComponent<SpriteRenderer>().color = m_cCPColor;
     }
@@ -102,12 +102,20 @@ public class Checkpoint : MonoBehaviour
         Debug.Log("TRIGGERED O_O");
         if (col.gameObject.tag == WAVE_TAG)
         {
-            Debug.Log("TRIGGERED Wave");
-            bool correctColor = (col.gameObject.GetComponent<MainWave>().GetColor() == m_cCPColor);
+            Color waveColor = col.gameObject.GetComponent<MainWave>().GetColor();//check with full alpha
+            waveColor.a = 1;
+
+            bool correctColor = (waveColor == m_cCPColor);
+            Debug.Log("TRIGGERED Checkpoint: " + correctColor + ", Wave Color: " + waveColor + ", CP COlor: " + m_cCPColor);
 
             //correctColor = true; //REMOVE
             CTEventManager.FireEvent(new UpdateSurfboardScoreEvent() { color = col.gameObject.GetComponent<MainWave>().GetColors(), scoreDelta = 10, addScore = correctColor }); //make per life
             UseCheckPoint();
+        }
+
+        if(col.gameObject.tag == Game.EMITTER_TAG)
+        {
+            ChangeColor();
         }
     }
 

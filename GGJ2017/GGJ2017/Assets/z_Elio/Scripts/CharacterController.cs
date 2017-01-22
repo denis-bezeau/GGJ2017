@@ -219,7 +219,7 @@ public class CharacterController : MonoBehaviour
 
     public GGJ2017GameManager.SURFBOARDCOLOR GetColor()
     {
-        Debug.Log("CharacterController: GetColor: " + m_scPlayerColor);
+        //Debug.Log("CharacterController: GetColor: " + m_scPlayerColor);
         return m_scPlayerColor;
     }
 	

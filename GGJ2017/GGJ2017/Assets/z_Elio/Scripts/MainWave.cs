@@ -10,7 +10,13 @@ public class MainWave : MonoBehaviour
     public Dictionary<GameObject, GGJ2017GameManager.SURFBOARDCOLOR> m_lPlayerColors = new Dictionary<GameObject, GGJ2017GameManager.SURFBOARDCOLOR>();
     public GGJ2017GameManager.SURFBOARDCOLOR m_scWaveColor;
     public Color m_cWaveColor = Color.green;
+    public Color m_cWaveColorFullAlpha;
     private GameObject m_goRenderer;
+
+    private float m_fTime = 0f;
+
+    public GameObject P1;
+    public GameObject P2;
 
     private float m_fColorAlpha = 0.5f;
 
@@ -36,7 +42,42 @@ public class MainWave : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        m_cWaveColorFullAlpha = m_cWaveColor;
+        m_cWaveColorFullAlpha.a = 1;
 
+        if (m_cWaveColorFullAlpha == Color.white)
+        {
+            ParticleMotion(P1, true);
+            ParticleMotion(P2, false);
+        }
+        else
+        {
+            if(P1.activeInHierarchy)
+            {
+                P1.SetActive(false);
+            }
+            if (P2.activeInHierarchy)
+            {
+                P2.SetActive(false);
+            }
+        }
+    }
+
+    private void ParticleMotion(GameObject go, bool mod)
+    {
+        if (!go.activeInHierarchy)
+        {
+            go.SetActive(true);
+        }
+        m_fTime += Time.deltaTime;
+        if(mod)
+        {
+            go.transform.position = new Vector3(transform.position.x, transform.position.y - 5 * Mathf.Sin((m_fTime % 1) * (1 * 2) * Mathf.PI), transform.position.z);
+        }
+        else
+        {
+            go.transform.position = new Vector3(transform.position.x, transform.position.y + 5 * Mathf.Sin((m_fTime % 1) * (1 * 2) * Mathf.PI), transform.position.z);
+        }
     }
 
     public void DetermineColor()
@@ -51,6 +92,10 @@ public class MainWave : MonoBehaviour
             //Debug.Log("MainWave: DetermineColor: m_cWaveColor: r: " + m_cWaveColor.r + ", g: " + m_cWaveColor.g + ", b: " + m_cWaveColor.b);
         }
         m_cWaveColor.a = m_fColorAlpha;
+        m_cWaveColor.r = (m_cWaveColor.r > 1) ? 1 : ((m_cWaveColor.r < 0) ? 0 : m_cWaveColor.r);
+        m_cWaveColor.g = (m_cWaveColor.g > 1) ? 1 : ((m_cWaveColor.g < 0) ? 0 : m_cWaveColor.g);
+        m_cWaveColor.b = (m_cWaveColor.b > 1) ? 1 : ((m_cWaveColor.b < 0) ? 0 : m_cWaveColor.b);
+
 
         m_goRenderer.GetComponent<SpriteRenderer>().color = m_cWaveColor;
     }

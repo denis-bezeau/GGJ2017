@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Game : MonoBehaviour
 {
+    public static string EMITTER_TAG = "Emitter";
+
     public static KeyCode RED_BUTTON = KeyCode.D;
     public static KeyCode BLUE_BUTTON = KeyCode.A;
     public static KeyCode GREEN_BUTTON = KeyCode.S;
@@ -74,7 +76,9 @@ public class Game : MonoBehaviour
             goCharacter = Instantiate(Resources.Load("Player")) as GameObject;
             cCharacterController = goCharacter.AddComponent<CharacterController>();
 			cCharacterController.m_scPlayerColor = (GGJ2017GameManager.SURFBOARDCOLOR)i;
-			Characters.Add(cCharacterController);
+            goCharacter.GetComponent<SpriteRenderer>().color = GGJ2017GameManager.m_dSurfboardColorToColor[cCharacterController.m_scPlayerColor];
+
+            Characters.Add(cCharacterController);
 
 			switch (cCharacterController.m_scPlayerColor)
 			{
@@ -131,10 +135,11 @@ public class Game : MonoBehaviour
 	public void OnSpawnNewSurfer(SpawnNewSurferEvent eventData)
 	{
 		GameObject goCharacter = Instantiate(Resources.Load("Player")) as GameObject;
-        Destroy(goCharacter.GetComponent<Collider2D>());
+        //Destroy(goCharacter.GetComponent<Collider2D>());
 		CharacterController cCharacterController = goCharacter.AddComponent<CharacterController>();
 		cCharacterController.m_scPlayerColor = eventData.color;
-		Characters.Add(cCharacterController);
+        goCharacter.GetComponent<SpriteRenderer>().color = GGJ2017GameManager.m_dSurfboardColorToColor[cCharacterController.m_scPlayerColor];
+        Characters.Add(cCharacterController);
 
 		switch (eventData.color)
 		{
