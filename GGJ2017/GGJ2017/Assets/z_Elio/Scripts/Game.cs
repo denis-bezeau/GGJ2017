@@ -13,7 +13,7 @@ public class Game : MonoBehaviour
     public static int MULTI_PLAYER_GAME = 1;
 
     public static int SP_STARTING_WAVES = 3;
-    public static int MP_STARTING_WAVES = 4;
+    public static int MP_STARTING_WAVES = 3;
 
     public static Game game;
 

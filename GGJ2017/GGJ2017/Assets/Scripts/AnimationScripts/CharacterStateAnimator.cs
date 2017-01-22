@@ -18,10 +18,10 @@ public class CharacterStateAnimator : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-		animator.SetBool("crouching", characterController.IsCrouching());
 		animator.SetFloat("MomentumX", characterController.GetVelocity().x);
 		animator.SetFloat("MomentumY", characterController.GetVelocity().y);
         animator.SetBool("Jumping", characterController.IsJumping());
+		animator.SetBool("crouching", characterController.IsWaving());
 		//animator.SetBool("IsDead", characterController.m_bIsDead);
     }
 }

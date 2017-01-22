@@ -54,7 +54,7 @@ public class CharacterController : MonoBehaviour
     {
 		MAIN_LOCATION = destinationNode;
 		m_goTargetPosition = MAIN_LOCATION;
-	}
+    }
 	// Use this for initialization
 	void Awake ()
     {
@@ -102,8 +102,15 @@ public class CharacterController : MonoBehaviour
 		//only the first dude for each Color Can Send a jump event
 		if (m_iPlayerIndexForYourColor == 0 && Input.GetKeyDown(m_kcJumpKey) && m_bJumping == false)
 		{
-			Debug.Log("CharacterController: Update: firing jump event");
+			if(Input.GetKey(KeyCode.LeftShift))
+			{
+				StartWaving();
+			}
+			else
+			{
+				Debug.Log("CharacterController: Update: firing jump event");
 			CTEventManager.FireEvent(new JumpEvent() { color = m_scPlayerColor });
+			}
 		}
 
 
@@ -135,6 +142,7 @@ public class CharacterController : MonoBehaviour
 				GoToLane(false);
 			}
 		}
+
 	}
 
 	public void OnJump()
@@ -145,7 +153,7 @@ public class CharacterController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        Debug.Log("TRIGGERED O_O");
+        
     }
 
     void OnTriggerStay2D(Collider2D col)
@@ -181,9 +189,22 @@ public class CharacterController : MonoBehaviour
         particle.transform.position = new Vector3(transform.position.x, transform.position.y + m_fWaveAmp * Mathf.Sin((m_fTime % 1) * (m_fWaveFrequency * 2) * Mathf.PI), transform.position.z);
     }
 
-	public bool IsCrouching()
+	private bool m_bWaving = false;
+	public void StartWaving()
 	{
-		return false;
+		m_bWaving = true;
+		StartCoroutine(StopWavingInXSeconds(2));
+	}
+
+	private IEnumerator StopWavingInXSeconds(float time)
+	{
+		yield return new WaitForSeconds(time);
+		m_bWaving = false;
+	}
+
+	public bool IsWaving()
+	{
+		return m_bWaving;
 	}
 
 	public bool IsJumping()
