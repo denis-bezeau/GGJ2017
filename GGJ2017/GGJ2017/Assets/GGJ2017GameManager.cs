@@ -39,8 +39,7 @@ public class GGJ2017GameManager : MonoBehaviour
 	{
 		BLUE,
 		RED,
-		GREEN,
-		YELLOW
+		GREEN
 	}
 
     static GGJ2017GameManager instance;
@@ -69,7 +68,6 @@ public class GGJ2017GameManager : MonoBehaviour
         m_dSurfboardColorToColor.Add(SURFBOARDCOLOR.BLUE, Color.blue);
         m_dSurfboardColorToColor.Add(SURFBOARDCOLOR.RED, Color.red);
         m_dSurfboardColorToColor.Add(SURFBOARDCOLOR.GREEN, Color.green);
-        m_dSurfboardColorToColor.Add(SURFBOARDCOLOR.YELLOW, Color.yellow);
 
         CreateColorList();
         ResetPowerLevels();
@@ -111,7 +109,6 @@ public class GGJ2017GameManager : MonoBehaviour
         m_dTotalColors.Add(SURFBOARDCOLOR.BLUE);
         m_dTotalColors.Add(SURFBOARDCOLOR.RED);
         m_dTotalColors.Add(SURFBOARDCOLOR.GREEN);
-        m_dTotalColors.Add(SURFBOARDCOLOR.YELLOW);
 
         int idx;
         SURFBOARDCOLOR curColor;
@@ -126,7 +123,6 @@ public class GGJ2017GameManager : MonoBehaviour
         CTEventManager.FireEvent(new SetPowerEvent() { m_scColor = SURFBOARDCOLOR.BLUE, value = 0 });
         CTEventManager.FireEvent(new SetPowerEvent() { m_scColor = SURFBOARDCOLOR.RED, value = 0 });
         CTEventManager.FireEvent(new SetPowerEvent() { m_scColor = SURFBOARDCOLOR.GREEN, value = 0 });
-        CTEventManager.FireEvent(new SetPowerEvent() { m_scColor = SURFBOARDCOLOR.YELLOW, value = 0 });
     }
 
 	public float GetGlobalScrollSpeed()
@@ -140,12 +136,12 @@ public class GGJ2017GameManager : MonoBehaviour
         SURFBOARDCOLOR colorIdx;
         float powerLevel;
         float totalPowerLevel;
-        foreach(KeyValuePair<GameObject, SURFBOARDCOLOR> go in eventData.color)
+        foreach (KeyValuePair<GameObject, SURFBOARDCOLOR> go in eventData.color)
         {
             colorIdx = eventData.color[go.Key];
             powerLevel = m_dPowerLevels[colorIdx] + (eventData.scoreDelta / 100f);
             totalPowerLevel = m_dTotalPowerLevels[colorIdx] + (eventData.scoreDelta / 100f);
-            
+
             m_dTotalPowerLevels[colorIdx] = (totalPowerLevel > 1) ? 1 : (totalPowerLevel < 0 ? 0 : totalPowerLevel); //Always add to total
             Debug.Log("GGJ: m_dTotalPowerLevels[colorIdx]: " + m_dTotalPowerLevels[colorIdx]);
 
@@ -154,6 +150,11 @@ public class GGJ2017GameManager : MonoBehaviour
                 m_dPowerLevels[colorIdx] = (powerLevel > 1) ? 1 : (powerLevel < 0 ? 0 : powerLevel);
                 CTEventManager.FireEvent(new SetPowerEvent() { m_scColor = colorIdx, value = m_dPowerLevels[colorIdx] });
             }
+        }
+
+        if (!eventData.addScore)
+        {
+            //Kill Combo
         }
     }
 
@@ -170,7 +171,7 @@ public class GGJ2017GameManager : MonoBehaviour
 			case SURFBOARDCOLOR.BLUE: Debug.Log("spawn BLUE surger"); break;
 			case SURFBOARDCOLOR.GREEN: Debug.Log("spawn GREEN surger"); break;
 			case SURFBOARDCOLOR.RED: Debug.Log("spawn RED surger"); break;
-			case SURFBOARDCOLOR.YELLOW: Debug.Log("spawn YELLOW surger"); break;
+            default: break;
 		}
 
 		CTEventManager.FireEvent(new SpawnNewSurferEvent() { color = eventData.color });

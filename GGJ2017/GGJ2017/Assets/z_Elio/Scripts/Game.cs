@@ -12,7 +12,7 @@ public class Game : MonoBehaviour
     public static int SINGLE_PLAYER_GAME = 0;
     public static int MULTI_PLAYER_GAME = 1;
 
-    public static int SP_STARTING_WAVES = 1;
+    public static int SP_STARTING_WAVES = 3;
     public static int MP_STARTING_WAVES = 4;
 
     public static Game game;
@@ -23,13 +23,11 @@ public class Game : MonoBehaviour
 	public List<CharacterController> BlueCharacters = new List<CharacterController>();
 	public List<CharacterController> RedCharacters = new List<CharacterController>();
 	public List<CharacterController> GreenCharacters = new List<CharacterController>();
-	public List<CharacterController> YellowCharacters = new List<CharacterController>();
 
 
 	public GameObject m_SpawningNodeBlue;
 	public GameObject m_SpawningNodeGreen;
 	public GameObject m_SpawningNodeRed;
-	public GameObject m_SpawningNodeYellow;
 	public GameObject m_oJumpNode;
 
     void Awake()
@@ -95,11 +93,8 @@ public class Game : MonoBehaviour
 					cCharacterController.CreateCharacterController(BLUE_BUTTON, i);
 					cCharacterController.PositionCharacter(m_SpawningNodeBlue);
 					break;
-				case GGJ2017GameManager.SURFBOARDCOLOR.YELLOW:
-					YellowCharacters.Add(cCharacterController);
-					cCharacterController.CreateCharacterController(YELLOW_BUTTON, i);
-					cCharacterController.PositionCharacter(m_SpawningNodeYellow);
-					break;
+                default:
+                    break;
 			}
 		}
 
@@ -113,7 +108,6 @@ public class Game : MonoBehaviour
 			case GGJ2017GameManager.SURFBOARDCOLOR.RED:		return RedCharacters;
 			case GGJ2017GameManager.SURFBOARDCOLOR.GREEN:	return GreenCharacters; 
 			case GGJ2017GameManager.SURFBOARDCOLOR.BLUE:	return BlueCharacters;
-			case GGJ2017GameManager.SURFBOARDCOLOR.YELLOW:	return YellowCharacters;
 		}
 
 		return null;
@@ -176,16 +170,7 @@ public class Game : MonoBehaviour
 				BlueCharacters.Add(cCharacterController);
 				cCharacterController.CreateCharacterController(BLUE_BUTTON, BlueCharacters.Count);
 				break;
-			case GGJ2017GameManager.SURFBOARDCOLOR.YELLOW:
-				cCharacterController.PositionCharacter(m_SpawningNodeYellow);
-				if (YellowCharacters.Count > 0)
-				{
-					cCharacterController.SetFollowTarget(YellowCharacters[YellowCharacters.Count - 1]);
-				}
-
-				cCharacterController.m_iPlayerIndexForYourColor = (YellowCharacters.Count);
-				YellowCharacters.Add(cCharacterController);
-				cCharacterController.CreateCharacterController(YELLOW_BUTTON, YellowCharacters.Count);
+            default:
 				break;
 		}
 	}

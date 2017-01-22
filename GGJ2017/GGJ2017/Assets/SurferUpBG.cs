@@ -16,7 +16,7 @@ public class SurferUpBG : MonoBehaviour {
 			case GGJ2017GameManager.SURFBOARDCOLOR.BLUE: BackgroundSprite.color = Color.blue; break;
 			case GGJ2017GameManager.SURFBOARDCOLOR.RED: BackgroundSprite.color = Color.red; break;
 			case GGJ2017GameManager.SURFBOARDCOLOR.GREEN: BackgroundSprite.color = Color.green; break;
-			case GGJ2017GameManager.SURFBOARDCOLOR.YELLOW: BackgroundSprite.color = Color.yellow; break;
+            default: break;
 		}
 	}
 	
