@@ -12,6 +12,11 @@ public class SpawnNewSurferEvent : CTEvent
 	public GGJ2017GameManager.SURFBOARDCOLOR color;
 }
 
+public class JumpEvent : CTEvent
+{
+	public GGJ2017GameManager.SURFBOARDCOLOR color;
+}
+
 public class GGJ2017GameManager : MonoBehaviour 
 {
 	public enum SURFBOARDCOLOR
