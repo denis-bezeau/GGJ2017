@@ -34,16 +34,16 @@ public class Game : MonoBehaviour
 
     void Awake()
     {
-        Debug.Log("Game: Awake:");
+        //Debug.Log("Game: Awake:");
         if(game == null)
         {
-            Debug.Log("Game: Awake: game is null");
+            //Debug.Log("Game: Awake: game is null");
             DontDestroyOnLoad(this.gameObject);
             game = this;
         }
         else if(game != null)
         {
-            Debug.Log("Game: Awake: game is not null destroy this instance");
+            //Debug.Log("Game: Awake: game is not null destroy this instance");
             Destroy(this.gameObject);
         }
 		CTEventManager.AddListener<SpawnNewSurferEvent>(OnSpawnNewSurfer);
@@ -61,10 +61,10 @@ public class Game : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-        Debug.Log("Game: Start:");
+        //Debug.Log("Game: Start:");
 
         int charactersToCreate = (iPlayerMode < MULTI_PLAYER_GAME) ? SP_STARTING_WAVES : MP_STARTING_WAVES;
-        Debug.Log("Game: Start: charactersToCreate: " + charactersToCreate);
+        //Debug.Log("Game: Start: charactersToCreate: " + charactersToCreate);
 
 		Characters = new List<CharacterController>();
         GameObject goCharacter;
@@ -72,13 +72,13 @@ public class Game : MonoBehaviour
         
         for(int i = 0; i < charactersToCreate; ++i)
         {
-            Debug.Log("Game: Start: Loop: " + i);
+            //Debug.Log("Game: Start: Loop: " + i);
             goCharacter = Instantiate(Resources.Load("Player")) as GameObject;
             cCharacterController = goCharacter.AddComponent<CharacterController>();
-			cCharacterController.m_eColor = (GGJ2017GameManager.SURFBOARDCOLOR)i;
+			cCharacterController.m_scPlayerColor = (GGJ2017GameManager.SURFBOARDCOLOR)i;
 			Characters.Add(cCharacterController);
 
-			switch (cCharacterController.m_eColor)
+			switch (cCharacterController.m_scPlayerColor)
 			{
 				case GGJ2017GameManager.SURFBOARDCOLOR.RED: 
 					RedCharacters.Add(cCharacterController);
@@ -102,8 +102,9 @@ public class Game : MonoBehaviour
 					break;
 			}
 		}
-		
-	}
+
+        CTEventManager.FireEvent(new ResetEvent() {});
+    }
 
 	public List<CharacterController> GetColorList(GGJ2017GameManager.SURFBOARDCOLOR color)
 	{
@@ -120,7 +121,7 @@ public class Game : MonoBehaviour
 	
 	public void OnKillSurfer(KillSurferEvent eventData)
 	{
-		List<CharacterController> colorList = GetColorList(eventData.surfer.m_eColor);
+		List<CharacterController> colorList = GetColorList(eventData.surfer.m_scPlayerColor);
 		
 		for (int i = eventData.surfer.m_iPlayerIndexForYourColor; i < colorList.Count; i++)
 		{
@@ -137,7 +138,7 @@ public class Game : MonoBehaviour
 	{
 		GameObject goCharacter = Instantiate(Resources.Load("Player")) as GameObject;
 		CharacterController cCharacterController = goCharacter.AddComponent<CharacterController>();
-		cCharacterController.m_eColor = eventData.color;
+		cCharacterController.m_scPlayerColor = eventData.color;
 		Characters.Add(cCharacterController);
 
 		switch (eventData.color)
@@ -199,7 +200,7 @@ public class Game : MonoBehaviour
 				continue;
 			}
 
-			if (eventData.color == character.m_eColor)
+			if (eventData.color == character.m_scPlayerColor)
 			{
 				if (character.m_bJumping == false)
 				{

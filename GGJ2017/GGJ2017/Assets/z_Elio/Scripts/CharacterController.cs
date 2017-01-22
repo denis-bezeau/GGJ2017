@@ -24,7 +24,6 @@ public class CharacterController : MonoBehaviour
     private float m_fWaveFrequency = 2f; //Speed limit is 15 freq is 5
 
     private GameObject m_goTargetPosition;
-	public GGJ2017GameManager.SURFBOARDCOLOR m_eColor;
 
 	public int m_iPlayerIndexForYourColor = 0;
     public bool m_bJumping = false;
@@ -34,7 +33,7 @@ public class CharacterController : MonoBehaviour
 
 	public bool m_bIsDead = false;
 
-    private Color m_cPlayerColor;
+	public GGJ2017GameManager.SURFBOARDCOLOR m_scPlayerColor;    private Color m_cPlayerColor;
 	public CharacterController m_oFollowTarget;
 
     public void CreateCharacterController(KeyCode jumpIn, int instanceIn)
@@ -45,13 +44,8 @@ public class CharacterController : MonoBehaviour
         m_kcJumpKey = jumpIn;
         m_iInstance = instanceIn;
 
-		switch (m_eColor)
-		{
-			case GGJ2017GameManager.SURFBOARDCOLOR.RED: m_cPlayerColor = Color.red; break;
-			case GGJ2017GameManager.SURFBOARDCOLOR.GREEN: m_cPlayerColor = Color.green; break;
-			case GGJ2017GameManager.SURFBOARDCOLOR.BLUE: m_cPlayerColor = Color.blue; break;
-			case GGJ2017GameManager.SURFBOARDCOLOR.YELLOW: m_cPlayerColor = Color.yellow; break;
-		}
+        m_cPlayerColor = GGJ2017GameManager.m_dSurfboardColorToColor[m_scPlayerColor];
+
         particle.GetComponent<ParticleSystem>().startColor = m_cPlayerColor;
         particle.GetComponent<ParticleSystem>().enableEmission = false;
     }
@@ -60,9 +54,7 @@ public class CharacterController : MonoBehaviour
     {
 		MAIN_LOCATION = destinationNode;
 		m_goTargetPosition = MAIN_LOCATION;
-		
-    }
-
+	}
 	// Use this for initialization
 	void Awake ()
     {
@@ -111,7 +103,7 @@ public class CharacterController : MonoBehaviour
 		if (m_iPlayerIndexForYourColor == 0 && Input.GetKeyDown(m_kcJumpKey) && m_bJumping == false)
 		{
 			Debug.Log("CharacterController: Update: firing jump event");
-			CTEventManager.FireEvent(new JumpEvent() { color = m_eColor });
+			CTEventManager.FireEvent(new JumpEvent() { color = m_scPlayerColor });
 		}
 
 
@@ -204,10 +196,10 @@ public class CharacterController : MonoBehaviour
 		return Vector2.right * 100;
 	}
 
-    public Color GetColor()
+    public GGJ2017GameManager.SURFBOARDCOLOR GetColor()
     {
-        Debug.Log("CharacterController: GetColor: " + m_cPlayerColor);
-        return m_cPlayerColor;
+        Debug.Log("CharacterController: GetColor: " + m_scPlayerColor);
+        return m_scPlayerColor;
     }
 	
 	public void SetFollowTarget(CharacterController followTarget)

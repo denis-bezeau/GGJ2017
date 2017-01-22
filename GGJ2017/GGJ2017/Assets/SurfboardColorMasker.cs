@@ -7,7 +7,7 @@ public class SurfboardColorMasker : MonoBehaviour
 {
 	public GGJ2017GameManager.SURFBOARDCOLOR eColor = GGJ2017GameManager.SURFBOARDCOLOR.BLUE;
 
-	private float m_fCurrentHeight = 0.0f;
+	public float m_fCurrentHeight = 0.01f;
 	
 	private float m_fTimer = 0.0f;
 	public float m_fAnimateTime = 1.0f;
@@ -28,7 +28,7 @@ public class SurfboardColorMasker : MonoBehaviour
 		m_oCanvasMask = GetComponent<RectTransform>();
 		m_fMaxHeight = m_oCanvasMask.rect.height;
 		m_fWidth = m_oCanvasMask.rect.width;
-		SetHeight(m_fStartingFill);
+		SetHeight(0.0f);
 	}
 
 	public void SetHeight(float fHeight)
@@ -58,7 +58,7 @@ public class SurfboardColorMasker : MonoBehaviour
 
 		if(Input.GetKeyDown(KeyCode.Space))
 		{
-			CTEventManager.FireEvent(new SetPowerEvent() { color = eColor, value = Random.Range(0.0f, 1.0f) });
+			//CTEventManager.FireEvent(new SetPowerEvent() { color = eColor, value = Random.Range(0.0f, 1.0f) });
 		}
 	}
 }

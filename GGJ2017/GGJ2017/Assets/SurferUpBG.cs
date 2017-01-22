@@ -31,7 +31,7 @@ public class SurferUpBG : MonoBehaviour {
 		CharacterController character = collider.gameObject.GetComponent<CharacterController>();
 		if(character != null)
 		{
-			if (character.m_eColor == m_eColor)
+			if (character.m_scPlayerColor == m_eColor)
 			{
 				CTEventManager.FireEvent(new SurferUpEvent() { color = m_eColor });
 				DestroyObject(gameObject);
