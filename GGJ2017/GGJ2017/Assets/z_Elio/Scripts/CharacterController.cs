@@ -36,6 +36,9 @@ public class CharacterController : MonoBehaviour
 	public GGJ2017GameManager.SURFBOARDCOLOR m_scPlayerColor;    private Color m_cPlayerColor;
 	public CharacterController m_oFollowTarget;
 
+	private bool m_bIsAttacking = false;
+	private bool m_bWaving = false;
+
     public void CreateCharacterController(KeyCode jumpIn, int instanceIn)
     {
         particle = Instantiate(Resources.Load("Particle")) as GameObject;
@@ -56,9 +59,8 @@ public class CharacterController : MonoBehaviour
 		m_goTargetPosition = MAIN_LOCATION;
     }
 	// Use this for initialization
-	void Awake ()
+	void Start ()
     {
-		MAIN_LOCATION = Game.game.m_SpawningNodeBlue;
 		JUMP_LOCATION = Game.game.m_oJumpNode;
 	}
 	
@@ -87,18 +89,21 @@ public class CharacterController : MonoBehaviour
 		if (m_bYielding)
 			return;
         //Debug.Log("CharacterController: Update:");
-        if(m_bJumping)
-        {
-            if(!particle.GetComponent<ParticleSystem>().emission.enabled)
-            {
-                particle.GetComponent<ParticleSystem>().enableEmission = true;
-            }
-            ParticleMotion();
-        }
-        else if (!m_bJumping && particle.GetComponent<ParticleSystem>().emission.enabled)
-        {
-            particle.GetComponent<ParticleSystem>().enableEmission = false;
-        }
+		if (particle != null)
+		{
+			if (m_bJumping)
+			{
+				if (!particle.GetComponent<ParticleSystem>().emission.enabled)
+				{
+					particle.GetComponent<ParticleSystem>().enableEmission = true;
+				}
+				ParticleMotion();
+			}
+			else if (!m_bJumping && particle.GetComponent<ParticleSystem>().emission.enabled)
+			{
+				particle.GetComponent<ParticleSystem>().enableEmission = false;
+			}
+		}
 
 
 		//only the first dude for each Color Can Send a jump event
@@ -108,19 +113,23 @@ public class CharacterController : MonoBehaviour
 			{
 				StartWaving();
 			}
+			else if (Input.GetKey(KeyCode.RightShift))
+			{
+				StartAttacking();
+			}
 			else
 			{
 				Debug.Log("CharacterController: Update: firing jump event");
-			CTEventManager.FireEvent(new JumpEvent() { color = m_scPlayerColor });
+				CTEventManager.FireEvent(new JumpEvent() { color = m_scPlayerColor });
 			}
 		}
-
 
 		if (m_goTargetPosition != null)
 		{
 			Vector3 AutoMovePosition = m_goTargetPosition.transform.position;
 			if (m_oFollowTarget != null)
 			{
+				Debug.Log("CharacterController: has a follow target so moving with offset");
 				AutoMovePosition = m_goTargetPosition.transform.position + Vector3.left * 5 * m_iPlayerIndexForYourColor; //be X guys behind the jump point
 			}
 
@@ -188,12 +197,12 @@ public class CharacterController : MonoBehaviour
     private void ParticleMotion()
     {
         m_fTime += Time.deltaTime;
-        particle.transform.position = new Vector3(transform.position.x, transform.position.y + m_fWaveAmp * Mathf.Sin((m_fTime % 1) * (m_fWaveFrequency * 2) * Mathf.PI), transform.position.z);
+        //particle.transform.position = new Vector3(transform.position.x, transform.position.y + m_fWaveAmp * Mathf.Sin((m_fTime % 1) * (m_fWaveFrequency * 2) * Mathf.PI), transform.position.z);
     }
 
-	private bool m_bWaving = false;
 	public void StartWaving()
 	{
+		Debug.Log("StartWaving()");
 		m_bWaving = true;
 		StartCoroutine(StopWavingInXSeconds(2));
 	}
@@ -201,12 +210,38 @@ public class CharacterController : MonoBehaviour
 	private IEnumerator StopWavingInXSeconds(float time)
 	{
 		yield return new WaitForSeconds(time);
+		Debug.Log("StopWaving()");
 		m_bWaving = false;
 	}
 
 	public bool IsWaving()
 	{
 		return m_bWaving;
+	}
+
+	public void StartAttacking()
+	{
+		Debug.Log("StartAttacking()");
+		m_bIsAttacking = true;
+		StartCoroutine(StopAttackingInXSeconds(2));
+	}
+
+	public void StopAttacking()
+	{
+		Debug.Log("StopAttacking()");
+		m_bIsAttacking = false;
+	}
+
+	private IEnumerator StopAttackingInXSeconds(float time)
+	{
+		yield return new WaitForSeconds(time);
+		Debug.Log("StopAttacking()");
+		m_bIsAttacking = false;
+	}
+
+	public bool IsAttacking()
+	{
+		return m_bIsAttacking;
 	}
 
 	public bool IsJumping()

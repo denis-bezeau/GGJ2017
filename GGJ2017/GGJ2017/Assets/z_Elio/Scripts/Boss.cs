@@ -28,7 +28,9 @@ public class Boss : MonoBehaviour
 	private Animator m_AnimatorWhale2;
 
 	private float m_fInvinvibleTimer = 0.0f;
-	private float INVINCIBLE_TIME = 2.0f;
+	private float INVINCIBLE_TIME = 1.0f;
+	
+
 
     // Use this for initialization
     void Start ()
@@ -52,7 +54,30 @@ public class Boss : MonoBehaviour
 	void Update ()
     {
 		m_fInvinvibleTimer -= Time.deltaTime;
-		if (m_fInvinvibleTimer < 0.0f) m_fInvinvibleTimer = 0.0f;
+		if (m_fInvinvibleTimer < 0.0f)
+		{
+			m_fInvinvibleTimer = 0.0f;
+
+			if (m_iMode == BOSS_MODE_V1)
+			{
+				m_goMode1.GetComponent<SpriteRenderer>().color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+			}
+			else if (m_iMode == BOSS_MODE_V2)
+			{
+				m_goMode2.GetComponent<SpriteRenderer>().color = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+			}
+		}
+		else
+		{
+			if (m_iMode == BOSS_MODE_V1)
+			{
+				m_goMode1.GetComponent<SpriteRenderer>().color = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1.0f);
+			}
+			else if (m_iMode == BOSS_MODE_V2)
+			{
+				m_goMode2.GetComponent<SpriteRenderer>().color = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1.0f);
+			}
+		}
 
 		if (m_bAttackPlayer)
 		{
@@ -75,10 +100,7 @@ public class Boss : MonoBehaviour
 			Debug.Log("Boss::TakeAHit() early return");
 			return;
 		}
-
-
-        --m_iCurrentLife;
-
+		--m_iCurrentLife;
 		Debug.Log("Boss::TakeAHit() new life total == " + m_iCurrentLife);
 		m_fInvinvibleTimer = INVINCIBLE_TIME;
 		//set invincibility timer
@@ -140,18 +162,27 @@ public class Boss : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        Debug.Log("TRIGGERED O_O");
-        if (col.gameObject.tag == PLAYER_ATTACK_TAG)
-        {
-			TakeAHit();
-        }
+		CharacterController character = col.gameObject.GetComponentInParent<CharacterController>();
+		if (character)
+		{
+			if (character.IsAttacking() && m_fInvinvibleTimer <= 0 && m_iCurrentLife > 0)
+			{
+				Debug.Log("OnTriggerEnter2D() take a hit");
+				TakeAHit();
+			}
+		}
     }
 
     void OnTriggerStay2D(Collider2D col)
     {
-        if (col.gameObject.tag == PLAYER_ATTACK_TAG)
+		CharacterController character = col.gameObject.GetComponentInParent<CharacterController>();
+		if (character)
         {
-            Debug.Log("TRIGGERED O_O Stay");
+			if (character.IsAttacking() && m_fInvinvibleTimer <= 0 && m_iCurrentLife >0)
+			{
+				Debug.Log("Boss::OnTriggerStay2D() take a hit");
+				TakeAHit();
+			}
         }
     }
 
@@ -159,7 +190,7 @@ public class Boss : MonoBehaviour
     {
         if (col.gameObject.tag == PLAYER_ATTACK_TAG)
         {
-            Debug.Log("TRIGGERED O_O Exit");
+			Debug.Log("Boss::TRIGGERED O_O Exit");
         }
     }
 }

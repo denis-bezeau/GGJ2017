@@ -23,7 +23,7 @@ public class Game : MonoBehaviour
 
     public static Game game;
 
-    public List<CharacterController> Characters;
+	public List<CharacterController> Characters;
     public int iPlayerMode = SINGLE_PLAYER_GAME;
 
 	public List<CharacterController> BlueCharacters = new List<CharacterController>();
@@ -62,8 +62,8 @@ public class Game : MonoBehaviour
 		CTEventManager.RemoveListener<JumpEvent>(OnJump);
 	}
 
-    // Use this for initialization
-    void Start ()
+	// Use this for initialization
+	void Start ()
     {
         Debug.Log("Game: Start:");
 
@@ -71,44 +71,13 @@ public class Game : MonoBehaviour
         Debug.Log("Game: Start: charactersToCreate: " + charactersToCreate);
 
 		Characters = new List<CharacterController>();
-        GameObject goCharacter;
-        CharacterController cCharacterController;
         
         for(int i = 0; i < charactersToCreate; ++i)
         {
-            Debug.Log("Game: Start: Loop: " + i);
-            goCharacter = Instantiate(Resources.Load("Player")) as GameObject;
-            cCharacterController = goCharacter.AddComponent<CharacterController>();
-			cCharacterController.m_scPlayerColor = (GGJ2017GameManager.SURFBOARDCOLOR)i;
-            goCharacter.GetComponent<SpriteRenderer>().color = GGJ2017GameManager.m_dSurfboardColorToColor[cCharacterController.m_scPlayerColor];
+			OnSpawnNewSurfer(new SpawnNewSurferEvent() { color = (GGJ2017GameManager.SURFBOARDCOLOR)i });
+		}
 
-            Characters.Add(cCharacterController);
-
-			switch (cCharacterController.m_scPlayerColor)
-			{
-				case GGJ2017GameManager.SURFBOARDCOLOR.RED: 
-					RedCharacters.Add(cCharacterController);
-					cCharacterController.CreateCharacterController(RED_BUTTON, i);
-					cCharacterController.PositionCharacter(m_SpawningNodeRed);
-					break;
-				case GGJ2017GameManager.SURFBOARDCOLOR.GREEN: 
-					GreenCharacters.Add(cCharacterController);
-					cCharacterController.CreateCharacterController(GREEN_BUTTON, i);
-					cCharacterController.PositionCharacter(m_SpawningNodeGreen);
-					break;
-				case GGJ2017GameManager.SURFBOARDCOLOR.BLUE: 
-					BlueCharacters.Add(cCharacterController);
-					cCharacterController.CreateCharacterController(BLUE_BUTTON, i);
-					cCharacterController.PositionCharacter(m_SpawningNodeBlue);
-					break;
-                default:
-                    break;
-			}
-
-            CTEventManager.FireEvent(new ReEvaluateSurferEvent() { surfer = goCharacter, add = true });
-        }
-
-        CTEventManager.FireEvent(new ResetEvent() {});
+		CTEventManager.FireEvent(new ResetEvent() {});
     }
 
 	public List<CharacterController> GetColorList(GGJ2017GameManager.SURFBOARDCOLOR color)
@@ -141,16 +110,16 @@ public class Game : MonoBehaviour
 			SceneManager.LoadScene("GameOver");
 		}
 
-        eventData.surfer.Kill();
+		eventData.surfer.Kill();
 	}
 
 	public void OnSpawnNewSurfer(SpawnNewSurferEvent eventData)
 	{
 		GameObject goCharacter = Instantiate(Resources.Load("Player")) as GameObject;
         //Destroy(goCharacter.GetComponent<Collider2D>());
-		CharacterController cCharacterController = goCharacter.AddComponent<CharacterController>();
+		CharacterController cCharacterController = goCharacter.GetComponent<CharacterController>();
 		cCharacterController.m_scPlayerColor = eventData.color;
-        goCharacter.GetComponent<SpriteRenderer>().color = GGJ2017GameManager.m_dSurfboardColorToColor[cCharacterController.m_scPlayerColor];
+        goCharacter.GetComponentInChildren<SpriteRenderer>().color = GGJ2017GameManager.m_dSurfboardColorToColor[cCharacterController.m_scPlayerColor];
         Characters.Add(cCharacterController);
 
 		switch (eventData.color)
@@ -193,7 +162,7 @@ public class Game : MonoBehaviour
 		}
 
         CTEventManager.FireEvent(new ReEvaluateSurferEvent() { surfer = goCharacter, add = true });
-    }
+	}
 
 	public void OnJump(JumpEvent eventData)
 	{
