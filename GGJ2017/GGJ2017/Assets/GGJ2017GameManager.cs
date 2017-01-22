@@ -10,6 +10,7 @@ public class SurferUpEvent : CTEvent
 public class SpawnNewSurferEvent : CTEvent
 {
 	public GGJ2017GameManager.SURFBOARDCOLOR color;
+    public bool initSpawn = false;
 }
 
 public class JumpEvent : CTEvent
@@ -146,18 +147,11 @@ public class GGJ2017GameManager : MonoBehaviour
 
     public static void RebuildDictionary(ReEvaluateSurferEvent eventData)
     {
-        foreach (KeyValuePair<GameObject, SURFBOARDCOLOR> go in m_lPlayerColors)
-        {
-            //Debug.Log("GO.value: pre" + go.Value);
-        }
-
-        //Debug.Log("GO.value: POST");
-
         if (eventData.add)
         {
             if (!m_lPlayerColors.ContainsKey(eventData.surfer) && eventData.surfer.GetComponent<CharacterController>())
             {
-                Debug.Log("Color: " + eventData.surfer.GetComponent<CharacterController>().m_scPlayerColor);
+                //Debug.Log("Color: " + eventData.surfer.GetComponent<CharacterController>().m_scPlayerColor);
                 m_lPlayerColors.Add(eventData.surfer, eventData.surfer.GetComponent<CharacterController>().m_scPlayerColor);
             }
         }
@@ -167,11 +161,6 @@ public class GGJ2017GameManager : MonoBehaviour
             {
                 m_lPlayerColors.Remove(eventData.surfer);
             }
-        }
-
-        foreach(KeyValuePair<GameObject, SURFBOARDCOLOR> go in m_lPlayerColors)
-        {
-            //Debug.Log("GO.value: post" + go.Value);
         }
     }
 
@@ -217,6 +206,11 @@ public class GGJ2017GameManager : MonoBehaviour
 
         Debug.Log("GGJ Color: ");
 
+        List<SURFBOARDCOLOR> sfrgb = new List<SURFBOARDCOLOR>();
+        sfrgb.Add(SURFBOARDCOLOR.RED);
+        sfrgb.Add(SURFBOARDCOLOR.GREEN);
+        sfrgb.Add(SURFBOARDCOLOR.BLUE);
+
         List<Color> rgb = new List<Color>();
         rgb.Add(new Color(eventData.color.r,0,0));
         rgb.Add(new Color(0, eventData.color.g, 0));
@@ -225,7 +219,7 @@ public class GGJ2017GameManager : MonoBehaviour
         for (idx = 0; idx < 3; ++idx)
         {
             currentColor = rgb[idx];
-            Debug.Log("GGJ Color: i: " + idx + ", part: " + currentColor + ", color: " + eventData.color);
+            //Debug.Log("GGJ Color: i: " + idx + ", part: " + currentColor + ", color: " + eventData.color);
 
             if (m_dColorToSurfboardColor.ContainsKey(currentColor))
             {
@@ -241,22 +235,22 @@ public class GGJ2017GameManager : MonoBehaviour
                     m_dPowerLevels[colorIdx] = (powerLevel > 1) ? 1 : (powerLevel < 0 ? 0 : powerLevel);
                     CTEventManager.FireEvent(new SetPowerEvent() { m_scColor = colorIdx, value = m_dPowerLevels[colorIdx] });
                 }
-                else //Kill some people
-                {
-                    //Game.game.RemoveExtraLife(colorIdx);
-                }
 
                 totalPointsSoFar = 0f;
                 foreach (KeyValuePair<SURFBOARDCOLOR, float> sf in m_dTotalPowerLevels)
                 {
                     totalPointsSoFar += (m_dTotalPowerLevels[sf.Key] / 3);
                 }
-                Debug.Log("GGJ totalpts: " + totalPointsSoFar);
+                //Debug.Log("GGJ totalpts: " + totalPointsSoFar);
 
                 if (totalPointsSoFar >= 1f)
                 {
                     CTEventManager.FireEvent(new LaunchBossFightEvent() { });
                 }
+            }
+            else if(!eventData.addScore)
+            {
+                Game.game.RemoveExtraLife(sfrgb[idx]);
             }
         }
 
@@ -311,7 +305,7 @@ public class GGJ2017GameManager : MonoBehaviour
             default: break;
 		}
 
-		CTEventManager.FireEvent(new SpawnNewSurferEvent() { color = eventData.color });
+		CTEventManager.FireEvent(new SpawnNewSurferEvent() { color = eventData.color, initSpawn = false});
 
 	}
 }

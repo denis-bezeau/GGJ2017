@@ -78,11 +78,11 @@ public class Checkpoint : MonoBehaviour
     
     void OnTriggerEnter2D(Collider2D col)
     {
-        Debug.Log("CheckPoint: TriggerEnter: " + col.gameObject.tag);
+        //Debug.Log("CheckPoint: TriggerEnter: " + col.gameObject.tag);
         if (col.gameObject.tag == Game.WAVE_TAG)
         {
             bool correctColor = (col.gameObject.GetComponent<MainWave>().GetColor() == m_cCPColor);//check with full alpha
-            Debug.Log("CheckPoint: TriggerEnter: Run event: " + correctColor);
+            //Debug.Log("CheckPoint: TriggerEnter: Run event: " + correctColor);
 
             if(!m_bUsed)
             {

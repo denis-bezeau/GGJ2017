@@ -38,15 +38,19 @@ public class Game : MonoBehaviour
 
     public void RemoveExtraLife(GGJ2017GameManager.SURFBOARDCOLOR color)
     {
+        Debug.Log("Remove Liife");
         switch (color)
         {
             case GGJ2017GameManager.SURFBOARDCOLOR.RED:
+                //Debug.Log("Remove Liife r: " + RedCharacters.Count);
                 if (RedCharacters.Count > 1) { CTEventManager.FireEvent(new KillSurferEvent() { surfer = RedCharacters[0] }); }
                 break;
             case GGJ2017GameManager.SURFBOARDCOLOR.GREEN:
+                //Debug.Log("Remove Liife g: " + GreenCharacters.Count);
                 if (GreenCharacters.Count > 1) { CTEventManager.FireEvent(new KillSurferEvent() { surfer = GreenCharacters[0] }); }
                 break;
             case GGJ2017GameManager.SURFBOARDCOLOR.BLUE:
+                //Debug.Log("Remove Liife b: " + BlueCharacters.Count);
                 if (BlueCharacters.Count > 1) { CTEventManager.FireEvent(new KillSurferEvent() { surfer = BlueCharacters[0] }); }
                 break;
         }
@@ -81,16 +85,16 @@ public class Game : MonoBehaviour
 	// Use this for initialization
 	void Start ()
     {
-        Debug.Log("Game: Start:");
+        //Debug.Log("Game: Start:");
 
         int charactersToCreate = (iPlayerMode < MULTI_PLAYER_GAME) ? SP_STARTING_WAVES : MP_STARTING_WAVES;
-        Debug.Log("Game: Start: charactersToCreate: " + charactersToCreate);
+        //Debug.Log("Game: Start: charactersToCreate: " + charactersToCreate);
 
 		Characters = new List<CharacterController>();
         
         for(int i = 0; i < charactersToCreate; ++i)
         {
-			OnSpawnNewSurfer(new SpawnNewSurferEvent() { color = (GGJ2017GameManager.SURFBOARDCOLOR)i });
+            OnSpawnNewSurfer(new SpawnNewSurferEvent() { color = (GGJ2017GameManager.SURFBOARDCOLOR)i, initSpawn = true});
 		}
 
 		CTEventManager.FireEvent(new ResetEvent() {});
@@ -110,6 +114,7 @@ public class Game : MonoBehaviour
 	
 	public void OnKillSurfer(KillSurferEvent eventData)
 	{
+        //Debug.Log("Kill SUrfer");
 		List<CharacterController> colorList = GetColorList(eventData.surfer.m_scPlayerColor);
 		
 		for (int i = eventData.surfer.m_iPlayerIndexForYourColor; i < colorList.Count; i++)
@@ -132,7 +137,7 @@ public class Game : MonoBehaviour
 	public void OnSpawnNewSurfer(SpawnNewSurferEvent eventData)
 	{
 		GameObject goCharacter = Instantiate(Resources.Load("Player")) as GameObject;
-        //Destroy(goCharacter.GetComponent<Collider2D>());
+        //if (!eventData.initSpawn) { Destroy(goCharacter.GetComponent<Collider2D>()); }
 		CharacterController cCharacterController = goCharacter.GetComponent<CharacterController>();
 		cCharacterController.m_scPlayerColor = eventData.color;
         goCharacter.GetComponentInChildren<SpriteRenderer>().color = GGJ2017GameManager.m_dSurfboardColorToColor[cCharacterController.m_scPlayerColor];
@@ -177,7 +182,7 @@ public class Game : MonoBehaviour
 				break;
 		}
 
-        Debug.Log("Game init");
+        //Debug.Log("Game init");
         CTEventManager.FireEvent(new ReEvaluateSurferEvent() { surfer = goCharacter, add = true });
 	}
 

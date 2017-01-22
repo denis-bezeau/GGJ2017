@@ -95,7 +95,7 @@ public class subWhaleScript : MonoBehaviour {
 
 	public void OnBeamAttack()
 	{
-		Debug.Log("OnCastSpells3");
+		//Debug.Log("OnCastSpells3");
 		GameObject newGO = GameObject.Instantiate(m_oProjectilePrefab, m_oProjectileStartLocation.transform);
 		Meteor meteor = newGO.GetComponent<Meteor>();
 		if (meteor)
@@ -108,13 +108,13 @@ public class subWhaleScript : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D collider)
 	{
-		Debug.Log("SurferUp::you triggered with " + collider.gameObject.name);
+		//Debug.Log("SurferUp::you triggered with " + collider.gameObject.name);
 		CharacterController character = collider.gameObject.GetComponent<CharacterController>();
 		if (character != null)
 		{
 			if (character.IsAttacking() == false && character.m_iPlayerIndexForYourColor == 0)
 			{
-				Debug.Log("DeadlyTerrain::you triggered with character color");
+				//Debug.Log("DeadlyTerrain::you triggered with character color");
 				CTEventManager.FireEvent(new KillSurferEvent() { surfer = character });
 			}
 		}
