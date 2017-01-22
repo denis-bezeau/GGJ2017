@@ -14,7 +14,7 @@ public class ScrollingWorldItem : MonoBehaviour
 	
 	// Update is called once per frame
 	void Update () {
-        if(m_fScrollSpeed != GGJ2017GameManager.GetInstance().GetGlobalScrollSpeed())
+        if(GGJ2017GameManager.GetInstance() != null && m_fScrollSpeed != GGJ2017GameManager.GetInstance().GetGlobalScrollSpeed())
         {
             m_fScrollSpeed = GGJ2017GameManager.GetInstance().GetGlobalScrollSpeed();
         }

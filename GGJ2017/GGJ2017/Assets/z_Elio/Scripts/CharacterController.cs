@@ -79,6 +79,7 @@ public class CharacterController : MonoBehaviour
 	{
 		yield return new WaitForSeconds(time);
 
+        Debug.Log("CC Die");
         CTEventManager.FireEvent(new ReEvaluateSurferEvent() { surfer = gameObject, add = false });
         Destroy(gameObject);
 	}

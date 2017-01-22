@@ -36,6 +36,22 @@ public class Game : MonoBehaviour
 	public GameObject m_SpawningNodeRed;
 	public GameObject m_oJumpNode;
 
+    public void RemoveExtraLife(GGJ2017GameManager.SURFBOARDCOLOR color)
+    {
+        switch (color)
+        {
+            case GGJ2017GameManager.SURFBOARDCOLOR.RED:
+                if (RedCharacters.Count > 1) { CTEventManager.FireEvent(new KillSurferEvent() { surfer = RedCharacters[0] }); }
+                break;
+            case GGJ2017GameManager.SURFBOARDCOLOR.GREEN:
+                if (GreenCharacters.Count > 1) { CTEventManager.FireEvent(new KillSurferEvent() { surfer = GreenCharacters[0] }); }
+                break;
+            case GGJ2017GameManager.SURFBOARDCOLOR.BLUE:
+                if (BlueCharacters.Count > 1) { CTEventManager.FireEvent(new KillSurferEvent() { surfer = BlueCharacters[0] }); }
+                break;
+        }
+    }
+
     void Awake()
     {
         //Debug.Log("Game: Awake:");
@@ -161,6 +177,7 @@ public class Game : MonoBehaviour
 				break;
 		}
 
+        Debug.Log("Game init");
         CTEventManager.FireEvent(new ReEvaluateSurferEvent() { surfer = goCharacter, add = true });
 	}
 

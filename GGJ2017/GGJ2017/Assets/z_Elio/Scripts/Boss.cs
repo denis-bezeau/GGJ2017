@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Boss : MonoBehaviour
 {
     private string PLAYER_ATTACK_TAG = "pAttack";
 
     private const int MAX_HITS_V1 = 3;
-    private const int MAX_HITS_V2 = 3;
+    private const int MAX_HITS_V2 = 5;
     private const int BOSS_MODE_V1 = 0;
     private const int BOSS_MODE_V2 = 1;
 
@@ -129,13 +130,27 @@ public class Boss : MonoBehaviour
 					m_AnimatorWhale1.SetTrigger("TransitionOut");
                     break;
                 case BOSS_MODE_V2:
-					m_AnimatorWhale2.SetTrigger("Die");
+                    Kill();
                     break;
             }
         }
     }
 
-	public void OnWhale1TransitionOutComplete()
+    public void Kill()
+    {
+        m_AnimatorWhale2.SetTrigger("Die");
+
+        StartCoroutine(DieInXSeconds(3));
+    }
+
+    private IEnumerator DieInXSeconds(float time)
+    {
+        yield return new WaitForSeconds(time);
+
+        SceneManager.LoadScene("Win");
+    }
+
+    public void OnWhale1TransitionOutComplete()
 	{
 		Debug.Log("Boss::OnWhale1TransitionOutComplete()"); 
 		m_goMode1.SetActive(false);

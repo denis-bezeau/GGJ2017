@@ -56,12 +56,14 @@ public class GGJ2017GameManager : MonoBehaviour
 
     public static List<Color> m_lPossibleColors = new List<Color>();
     public static List<SURFBOARDCOLOR> m_dTotalColors = new List<SURFBOARDCOLOR>();
-    private Dictionary<SURFBOARDCOLOR, float> m_dPowerLevels = new Dictionary<SURFBOARDCOLOR, float>();
-    private Dictionary<SURFBOARDCOLOR, float> m_dTotalPowerLevels = new Dictionary<SURFBOARDCOLOR, float>();
     public static Dictionary<SURFBOARDCOLOR, Color> m_dSurfboardColorToColor = new Dictionary<SURFBOARDCOLOR, Color>();
     public static Dictionary<Color, SURFBOARDCOLOR> m_dColorToSurfboardColor = new Dictionary<Color, SURFBOARDCOLOR>();
-
     public static Dictionary<GameObject, GGJ2017GameManager.SURFBOARDCOLOR> m_lPlayerColors = new Dictionary<GameObject, GGJ2017GameManager.SURFBOARDCOLOR>();
+
+    private Dictionary<SURFBOARDCOLOR, float> m_dPowerLevels = new Dictionary<SURFBOARDCOLOR, float>();
+    private Dictionary<SURFBOARDCOLOR, float> m_dTotalPowerLevels = new Dictionary<SURFBOARDCOLOR, float>();
+
+    private static float POINTS_PER_CP = 0.5f;
 
     public Emitter CPEmitter;
     public Emitter PEmitter;
@@ -153,8 +155,9 @@ public class GGJ2017GameManager : MonoBehaviour
 
         if (eventData.add)
         {
-            if (!m_lPlayerColors.ContainsKey(eventData.surfer))
+            if (!m_lPlayerColors.ContainsKey(eventData.surfer) && eventData.surfer.GetComponent<CharacterController>())
             {
+                Debug.Log("Color: " + eventData.surfer.GetComponent<CharacterController>().m_scPlayerColor);
                 m_lPlayerColors.Add(eventData.surfer, eventData.surfer.GetComponent<CharacterController>().m_scPlayerColor);
             }
         }
@@ -228,15 +231,31 @@ public class GGJ2017GameManager : MonoBehaviour
             {
                 colorIdx = m_dColorToSurfboardColor[currentColor];
 
-                totalPowerLevel = m_dTotalPowerLevels[colorIdx] + .1f;
-                powerLevel = m_dTotalPowerLevels[colorIdx] + .1f;
+                totalPowerLevel = m_dTotalPowerLevels[colorIdx] + POINTS_PER_CP;
+                powerLevel = m_dTotalPowerLevels[colorIdx] + POINTS_PER_CP;
 
                 m_dTotalPowerLevels[colorIdx] = (totalPowerLevel > 1) ? 1 : (totalPowerLevel < 0 ? 0 : totalPowerLevel); //Always add to total
 
-                if (eventData.addScore)
+                if (eventData.addScore) //Get points
                 {
                     m_dPowerLevels[colorIdx] = (powerLevel > 1) ? 1 : (powerLevel < 0 ? 0 : powerLevel);
                     CTEventManager.FireEvent(new SetPowerEvent() { m_scColor = colorIdx, value = m_dPowerLevels[colorIdx] });
+                }
+                else //Kill some people
+                {
+                    //Game.game.RemoveExtraLife(colorIdx);
+                }
+
+                totalPointsSoFar = 0f;
+                foreach (KeyValuePair<SURFBOARDCOLOR, float> sf in m_dTotalPowerLevels)
+                {
+                    totalPointsSoFar += (m_dTotalPowerLevels[sf.Key] / 3);
+                }
+                Debug.Log("GGJ totalpts: " + totalPointsSoFar);
+
+                if (totalPointsSoFar >= 1f)
+                {
+                    CTEventManager.FireEvent(new LaunchBossFightEvent() { });
                 }
             }
         }

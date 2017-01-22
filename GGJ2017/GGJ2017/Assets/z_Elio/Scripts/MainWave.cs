@@ -118,6 +118,7 @@ public class MainWave : MonoBehaviour
         if (col.gameObject.tag == PLAYER_TAG)
         {
             //Debug.Log("GO Color: " + col.GetComponent<CharacterController>().GetColor());
+            Debug.Log("MainWave: trigger Enter: " + col.gameObject);
             CTEventManager.FireEvent(new ReEvaluateSurferEvent() { surfer = col.gameObject, add = true });
             DetermineColor();
         }
@@ -137,6 +138,7 @@ public class MainWave : MonoBehaviour
         //Debug.Log("MainWave: OnTriggerExit2D: TRIGGERED");
         if (col.gameObject.tag == PLAYER_TAG)
         {
+            Debug.Log("MainWave: trigger Exit");
             CTEventManager.FireEvent(new ReEvaluateSurferEvent() { surfer = col.gameObject, add = false});
             DetermineColor();
         }
