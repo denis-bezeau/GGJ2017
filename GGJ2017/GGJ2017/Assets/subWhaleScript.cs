@@ -27,6 +27,7 @@ public class subWhaleScript : MonoBehaviour {
 	{
 		Debug.Log("OnRamFinish");
 		m_AnimatorWhale1.SetBool("IsRamming", false);
+		m_oBossScript.OnAttackFinished();
 	}
 
 
@@ -34,30 +35,50 @@ public class subWhaleScript : MonoBehaviour {
 	{
 		Debug.Log("OnCastingFinish");
 		m_AnimatorWhale1.SetBool("IsCasting", false);
+		m_oBossScript.OnAttackFinished();
 	}
 
 	public void OnBeamingFinish()
 	{
 		Debug.Log("OnBeamingFinish");
 		m_AnimatorWhale1.SetBool("IsChargingUp", false);
+		m_oBossScript.OnAttackFinished();
 	}
 
 	public void OnCastSpells1()
 	{
 		Debug.Log("OnCastSpells1");
-		GameObject.Instantiate(m_oProjectilePrefab, m_oProjectileStartLocation.transform);
+		GameObject newGO = GameObject.Instantiate(m_oProjectilePrefab, m_oProjectileStartLocation.transform);
+		Meteor meteor = newGO.GetComponent<Meteor>();
+		if (meteor)
+		{
+			meteor.color = (GGJ2017GameManager.SURFBOARDCOLOR)Random.Range(0, 2);
+			meteor.direction = (1 + Random.Range(0, 5)) * Vector3.left + Vector3.down * Random.Range(0, 4);
+		}
 	}
 
 	public void OnCastSpells2()
 	{
 		Debug.Log("OnCastSpells2");
-		GameObject.Instantiate(m_oProjectilePrefab, m_oProjectileStartLocation.transform);
+		GameObject newGO = GameObject.Instantiate(m_oProjectilePrefab, m_oProjectileStartLocation.transform);
+		Meteor meteor = newGO.GetComponent<Meteor>();
+		if (meteor)
+		{
+			meteor.color = (GGJ2017GameManager.SURFBOARDCOLOR)Random.Range(0, 2);
+			meteor.direction = (1 + Random.Range(0, 6))*Vector3.left + Vector3.down * Random.Range(0, 4);
+		}
 	}
 
 	public void OnCastSpells3()
 	{
 		Debug.Log("OnCastSpells3");
-		GameObject.Instantiate(m_oProjectilePrefab, m_oProjectileStartLocation.transform);
+		GameObject newGO = GameObject.Instantiate(m_oProjectilePrefab, m_oProjectileStartLocation.transform);
+		Meteor meteor = newGO.GetComponent<Meteor>();
+		if (meteor)
+		{
+			meteor.color = (GGJ2017GameManager.SURFBOARDCOLOR)Random.Range(0, 2);
+			meteor.direction = (1 + Random.Range(0, 6)) * Vector3.left + Vector3.down * Random.Range(0, 4);
+		}
 	}
 
 
@@ -75,6 +96,27 @@ public class subWhaleScript : MonoBehaviour {
 	public void OnBeamAttack()
 	{
 		Debug.Log("OnCastSpells3");
-		GameObject.Instantiate(m_oBeamPrefab, m_oProjectileStartLocation.transform);
+		GameObject newGO = GameObject.Instantiate(m_oProjectilePrefab, m_oProjectileStartLocation.transform);
+		Meteor meteor = newGO.GetComponent<Meteor>();
+		if (meteor)
+		{
+			meteor.color = (GGJ2017GameManager.SURFBOARDCOLOR)Random.Range(0, 2);
+			meteor.direction = (Random.Range(1, 7)) * Vector3.left + Vector3.down * (-2 + Random.Range(0, 6));
+		}
+	}
+
+
+	void OnTriggerEnter2D(Collider2D collider)
+	{
+		Debug.Log("SurferUp::you triggered with " + collider.gameObject.name);
+		CharacterController character = collider.gameObject.GetComponent<CharacterController>();
+		if (character != null)
+		{
+			if (character.IsAttacking() == false)
+			{
+				Debug.Log("DeadlyTerrain::you triggered with character color");
+				CTEventManager.FireEvent(new KillSurferEvent() { surfer = character });
+			}
+		}
 	}
 }

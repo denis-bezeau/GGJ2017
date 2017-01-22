@@ -24,13 +24,15 @@ public class Boss : MonoBehaviour
 	public bool m_bAttackPlayer;
 	public bool m_bTakeAHit;
 
+	private bool m_bAttacking = false;
+
 	private Animator m_AnimatorWhale1;
 	private Animator m_AnimatorWhale2;
 
 	private float m_fInvinvibleTimer = 0.0f;
 	private float INVINCIBLE_TIME = 1.0f;
-	
 
+	private float m_fAttackTimer = 0.0f;
 
     // Use this for initialization
     void Start ()
@@ -76,6 +78,16 @@ public class Boss : MonoBehaviour
 			else if (m_iMode == BOSS_MODE_V2)
 			{
 				m_goMode2.GetComponent<SpriteRenderer>().color = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1.0f);
+			}
+		}
+
+		if (m_fInvinvibleTimer == 0.0f)
+		{
+			m_fAttackTimer -= Time.deltaTime;
+			if (m_fAttackTimer < 0.0f)
+			{
+				m_fAttackTimer = 0.0f;
+				AttackPlayer();
 			}
 		}
 
@@ -135,6 +147,8 @@ public class Boss : MonoBehaviour
 
     private void AttackPlayer()
     {
+		m_bAttacking = true;
+		
         switch (m_iMode)
         {
             default:
@@ -142,7 +156,7 @@ public class Boss : MonoBehaviour
             case BOSS_MODE_V1:
                 m_iAttackMode = ATTACK_RAM;
 				m_AnimatorWhale1.SetBool("IsRamming", true);
-				
+				m_fInvinvibleTimer = INVINCIBLE_TIME;
                 break;
             case BOSS_MODE_V2:
                 m_iAttackMode = Random.Range(ATTACK_RAM, ATTACK_LAZER);
@@ -157,6 +171,12 @@ public class Boss : MonoBehaviour
                 break;
         }
     }
+
+	public void OnAttackFinished()
+	{
+		m_fAttackTimer = Random.Range(1.0f, 3.0f);
+		m_bAttacking = false;
+	}
 
 
 
