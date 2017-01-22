@@ -76,7 +76,9 @@ public class CharacterController : MonoBehaviour
 	private IEnumerator DieInXSeconds(float time)
 	{
 		yield return new WaitForSeconds(time);
-		Destroy(gameObject);
+
+        CTEventManager.FireEvent(new ReEvaluateSurferEvent() { surfer = gameObject, add = false });
+        Destroy(gameObject);
 	}
 
 	// Update is called once per frame

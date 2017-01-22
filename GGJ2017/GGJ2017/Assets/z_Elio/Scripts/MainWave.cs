@@ -42,6 +42,9 @@ public class MainWave : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        DetermineColor(); //Dirty but f**k it amirite?
+
         m_cWaveColorFullAlpha = m_cWaveColor;
         m_cWaveColorFullAlpha.a = 1;
 
@@ -86,7 +89,7 @@ public class MainWave : MonoBehaviour
 
         m_cWaveColor = Color.black;
         //Debug.Log("MainWave: DetermineColor: m_cWaveColor: r: " + m_cWaveColor.r + ", g: " + m_cWaveColor.g + ", b: " + m_cWaveColor.b);
-        foreach (KeyValuePair<GameObject,GGJ2017GameManager.SURFBOARDCOLOR> go in m_lPlayerColors)
+        foreach (KeyValuePair<GameObject,GGJ2017GameManager.SURFBOARDCOLOR> go in GGJ2017GameManager.m_lPlayerColors)
         {
             m_cWaveColor += GGJ2017GameManager.m_dSurfboardColorToColor[go.Value];
             //Debug.Log("MainWave: DetermineColor: m_cWaveColor: r: " + m_cWaveColor.r + ", g: " + m_cWaveColor.g + ", b: " + m_cWaveColor.b);
@@ -99,15 +102,14 @@ public class MainWave : MonoBehaviour
 
         m_goRenderer.GetComponent<SpriteRenderer>().color = m_cWaveColor;
     }
-    
-    public Dictionary<GameObject, GGJ2017GameManager.SURFBOARDCOLOR> GetColors()
-    {
-        return m_lPlayerColors;
-    }
 
     public Color GetColor()
     {
-        return m_cWaveColor;
+        Color waveColor = m_cWaveColor;
+        waveColor.a = 1;
+
+        Debug.Log("MainWave: Color: " + waveColor);
+        return waveColor;
     }
 
     void OnTriggerEnter2D(Collider2D col)
@@ -116,7 +118,7 @@ public class MainWave : MonoBehaviour
         if (col.gameObject.tag == PLAYER_TAG)
         {
             //Debug.Log("GO Color: " + col.GetComponent<CharacterController>().GetColor());
-            m_lPlayerColors.Add(col.gameObject, col.GetComponent<CharacterController>().GetColor());
+            CTEventManager.FireEvent(new ReEvaluateSurferEvent() { surfer = col.gameObject, add = true });
             DetermineColor();
         }
     }
@@ -135,7 +137,7 @@ public class MainWave : MonoBehaviour
         //Debug.Log("MainWave: OnTriggerExit2D: TRIGGERED");
         if (col.gameObject.tag == PLAYER_TAG)
         {
-            m_lPlayerColors.Remove(col.gameObject);
+            CTEventManager.FireEvent(new ReEvaluateSurferEvent() { surfer = col.gameObject, add = false});
             DetermineColor();
         }
     }

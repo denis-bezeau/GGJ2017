@@ -22,15 +22,25 @@ public class KillSurferEvent : CTEvent
 	public CharacterController surfer;
 }
 
+public class ReEvaluateSurferEvent : CTEvent
+{
+    public GameObject surfer;
+    public bool add;
+}
+
+public class LaunchBossFightEvent : CTEvent
+{
+}
+
 public class ResetEvent : CTEvent
 {
 }
 
 public class UpdateSurfboardScoreEvent: CTEvent
 {
-    public Dictionary<GameObject, GGJ2017GameManager.SURFBOARDCOLOR> color;
     public bool addScore;
     public int scoreDelta;
+    public Color color;
 }
 
 public class GGJ2017GameManager : MonoBehaviour 
@@ -49,8 +59,16 @@ public class GGJ2017GameManager : MonoBehaviour
     private Dictionary<SURFBOARDCOLOR, float> m_dPowerLevels = new Dictionary<SURFBOARDCOLOR, float>();
     private Dictionary<SURFBOARDCOLOR, float> m_dTotalPowerLevels = new Dictionary<SURFBOARDCOLOR, float>();
     public static Dictionary<SURFBOARDCOLOR, Color> m_dSurfboardColorToColor = new Dictionary<SURFBOARDCOLOR, Color>();
+    public static Dictionary<Color, SURFBOARDCOLOR> m_dColorToSurfboardColor = new Dictionary<Color, SURFBOARDCOLOR>();
 
-	public float m_fGlobalScrollSpeed;
+    public static Dictionary<GameObject, GGJ2017GameManager.SURFBOARDCOLOR> m_lPlayerColors = new Dictionary<GameObject, GGJ2017GameManager.SURFBOARDCOLOR>();
+
+    public Emitter CPEmitter;
+    public Emitter PEmitter;
+    public Boss boss;
+    private float totalPointsSoFar = 0f;
+
+    public float m_fGlobalScrollSpeed;
 
 	public static GGJ2017GameManager GetInstance()
 	{
@@ -65,10 +83,17 @@ public class GGJ2017GameManager : MonoBehaviour
 
 	public void Awake()
 	{
+        m_dSurfboardColorToColor.Clear();
         m_dSurfboardColorToColor.Add(SURFBOARDCOLOR.BLUE, Color.blue);
         m_dSurfboardColorToColor.Add(SURFBOARDCOLOR.RED, Color.red);
         m_dSurfboardColorToColor.Add(SURFBOARDCOLOR.GREEN, Color.green);
 
+        m_dColorToSurfboardColor.Clear();
+        m_dColorToSurfboardColor.Add(Color.blue, SURFBOARDCOLOR.BLUE);
+        m_dColorToSurfboardColor.Add(Color.red, SURFBOARDCOLOR.RED);
+        m_dColorToSurfboardColor.Add(Color.green, SURFBOARDCOLOR.GREEN);
+
+        m_dTotalColors.Clear();
         m_dTotalColors.Add(SURFBOARDCOLOR.BLUE);
         m_dTotalColors.Add(SURFBOARDCOLOR.RED);
         m_dTotalColors.Add(SURFBOARDCOLOR.GREEN);
@@ -78,18 +103,22 @@ public class GGJ2017GameManager : MonoBehaviour
 
         CTEventManager.AddListener<SurferUpEvent>(OnSurferUp);
         CTEventManager.AddListener<UpdateSurfboardScoreEvent>(OnSurferScore);
+        CTEventManager.AddListener<ReEvaluateSurferEvent>(RebuildDictionary);
         CTEventManager.AddListener<ResetEvent>(ResetPowerLevels);
+        CTEventManager.AddListener<LaunchBossFightEvent>(LaunchBossBattle);
     }
 
 	public void OnDestroy()
 	{
 		CTEventManager.RemoveListener<SurferUpEvent>(OnSurferUp);
         CTEventManager.RemoveListener<UpdateSurfboardScoreEvent>(OnSurferScore);
+        CTEventManager.RemoveListener<ReEvaluateSurferEvent>(RebuildDictionary);
         CTEventManager.RemoveListener<ResetEvent>(ResetPowerLevels);
     }
 
     private void CreateColorList()
     {
+        m_lPossibleColors.Clear();
         m_lPossibleColors.Add(Color.black);
 
         m_lPossibleColors.Add(Color.red);
@@ -103,13 +132,54 @@ public class GGJ2017GameManager : MonoBehaviour
         m_lPossibleColors.Add(new Color(1, 1, 1));
     }
 
+    public void LaunchBossBattle(LaunchBossFightEvent eventData)
+    {
+        CPEmitter.gameObject.SetActive(false);
+        PEmitter.gameObject.SetActive(false);
+
+        boss.gameObject.SetActive(true);
+    }
+
+    public static void RebuildDictionary(ReEvaluateSurferEvent eventData)
+    {
+        foreach (KeyValuePair<GameObject, SURFBOARDCOLOR> go in m_lPlayerColors)
+        {
+            //Debug.Log("GO.value: pre" + go.Value);
+        }
+
+        //Debug.Log("GO.value: POST");
+
+        if (eventData.add)
+        {
+            if (!m_lPlayerColors.ContainsKey(eventData.surfer))
+            {
+                m_lPlayerColors.Add(eventData.surfer, eventData.surfer.GetComponent<CharacterController>().m_scPlayerColor);
+            }
+        }
+        else
+        {
+            if (m_lPlayerColors.ContainsKey(eventData.surfer))
+            {
+                m_lPlayerColors.Remove(eventData.surfer);
+            }
+        }
+
+        foreach(KeyValuePair<GameObject, SURFBOARDCOLOR> go in m_lPlayerColors)
+        {
+            //Debug.Log("GO.value: post" + go.Value);
+        }
+    }
+
     public void ResetPowerLevels(ResetEvent eventData = null)
     {
+        CPEmitter.gameObject.SetActive(true);
+        PEmitter.gameObject.SetActive(true);
+
+        boss.gameObject.SetActive(false);
+
         //Debug.Log("Reset");
         m_dPowerLevels = new Dictionary<SURFBOARDCOLOR, float>();
         m_dTotalPowerLevels = new Dictionary<SURFBOARDCOLOR, float>();
-
-        
 
         int idx;
         SURFBOARDCOLOR curColor;
@@ -137,9 +207,42 @@ public class GGJ2017GameManager : MonoBehaviour
         SURFBOARDCOLOR colorIdx;
         float powerLevel;
         float totalPowerLevel;
-        foreach (KeyValuePair<GameObject, SURFBOARDCOLOR> go in eventData.color)
+
+        Color currentColor;
+
+        Debug.Log("GGJ Color: ");
+
+        List<Color> rgb = new List<Color>();
+        rgb.Add(new Color(eventData.color.r,0,0));
+        rgb.Add(new Color(0, eventData.color.g, 0));
+        rgb.Add(new Color(0,0,eventData.color.b));
+
+        for (idx = 0; idx < 3; ++idx)
         {
-            colorIdx = eventData.color[go.Key];
+            currentColor = rgb[idx];
+            Debug.Log("GGJ Color: i: " + idx + ", part: " + currentColor + ", color: " + eventData.color);
+
+            if (m_dColorToSurfboardColor.ContainsKey(currentColor))
+            {
+                colorIdx = m_dColorToSurfboardColor[currentColor];
+
+                totalPowerLevel = m_dTotalPowerLevels[colorIdx] + .1f;
+                powerLevel = m_dTotalPowerLevels[colorIdx] + .1f;
+
+                m_dTotalPowerLevels[colorIdx] = (totalPowerLevel > 1) ? 1 : (totalPowerLevel < 0 ? 0 : totalPowerLevel); //Always add to total
+
+                if (eventData.addScore)
+                {
+                    m_dPowerLevels[colorIdx] = (powerLevel > 1) ? 1 : (powerLevel < 0 ? 0 : powerLevel);
+                    CTEventManager.FireEvent(new SetPowerEvent() { m_scColor = colorIdx, value = m_dPowerLevels[colorIdx] });
+                }
+            }
+        }
+
+        /*
+        foreach (KeyValuePair<GameObject, SURFBOARDCOLOR> go in m_lPlayerColors)
+        {
+            colorIdx = m_lPlayerColors[go.Key];
             powerLevel = m_dPowerLevels[colorIdx] + (eventData.scoreDelta / 100f);
             totalPowerLevel = m_dTotalPowerLevels[colorIdx] + (eventData.scoreDelta / 100f);
 
@@ -151,7 +254,19 @@ public class GGJ2017GameManager : MonoBehaviour
                 m_dPowerLevels[colorIdx] = (powerLevel > 1) ? 1 : (powerLevel < 0 ? 0 : powerLevel);
                 CTEventManager.FireEvent(new SetPowerEvent() { m_scColor = colorIdx, value = m_dPowerLevels[colorIdx] });
             }
-        }
+
+            totalPointsSoFar = 0f;
+            foreach (KeyValuePair<SURFBOARDCOLOR, float>sf in m_dTotalPowerLevels)
+            {
+                totalPointsSoFar += (m_dTotalPowerLevels[sf.Key] / 3);
+            }
+            Debug.Log("GGJ totalpts: " + totalPointsSoFar);
+
+            if (totalPointsSoFar >= 1f)
+            {
+                CTEventManager.FireEvent(new LaunchBossFightEvent() { });
+            }
+        }//*/
 
         if (!eventData.addScore)
         {

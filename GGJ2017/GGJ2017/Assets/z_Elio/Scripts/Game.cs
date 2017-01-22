@@ -6,6 +6,9 @@ using UnityEngine.SceneManagement;
 public class Game : MonoBehaviour
 {
     public static string EMITTER_TAG = "Emitter";
+    public static string WAVE_TAG = "Wave";
+    public static string PLAYER_TAG = "Player";
+    public static string EMPTY_TAG = "NONE";
 
     public static KeyCode RED_BUTTON = KeyCode.D;
     public static KeyCode BLUE_BUTTON = KeyCode.A;
@@ -20,7 +23,7 @@ public class Game : MonoBehaviour
 
     public static Game game;
 
-	public List<CharacterController> Characters;
+    public List<CharacterController> Characters;
     public int iPlayerMode = SINGLE_PLAYER_GAME;
 
 	public List<CharacterController> BlueCharacters = new List<CharacterController>();
@@ -59,13 +62,13 @@ public class Game : MonoBehaviour
 		CTEventManager.RemoveListener<JumpEvent>(OnJump);
 	}
 
-	// Use this for initialization
-	void Start ()
+    // Use this for initialization
+    void Start ()
     {
-        //Debug.Log("Game: Start:");
+        Debug.Log("Game: Start:");
 
         int charactersToCreate = (iPlayerMode < MULTI_PLAYER_GAME) ? SP_STARTING_WAVES : MP_STARTING_WAVES;
-        //Debug.Log("Game: Start: charactersToCreate: " + charactersToCreate);
+        Debug.Log("Game: Start: charactersToCreate: " + charactersToCreate);
 
 		Characters = new List<CharacterController>();
         GameObject goCharacter;
@@ -73,7 +76,7 @@ public class Game : MonoBehaviour
         
         for(int i = 0; i < charactersToCreate; ++i)
         {
-            //Debug.Log("Game: Start: Loop: " + i);
+            Debug.Log("Game: Start: Loop: " + i);
             goCharacter = Instantiate(Resources.Load("Player")) as GameObject;
             cCharacterController = goCharacter.AddComponent<CharacterController>();
 			cCharacterController.m_scPlayerColor = (GGJ2017GameManager.SURFBOARDCOLOR)i;
@@ -101,7 +104,9 @@ public class Game : MonoBehaviour
                 default:
                     break;
 			}
-		}
+
+            CTEventManager.FireEvent(new ReEvaluateSurferEvent() { surfer = goCharacter, add = true });
+        }
 
         CTEventManager.FireEvent(new ResetEvent() {});
     }
@@ -135,7 +140,8 @@ public class Game : MonoBehaviour
 		{
 			SceneManager.LoadScene("GameOver");
 		}
-		eventData.surfer.Kill();
+
+        eventData.surfer.Kill();
 	}
 
 	public void OnSpawnNewSurfer(SpawnNewSurferEvent eventData)
@@ -185,7 +191,9 @@ public class Game : MonoBehaviour
             default:
 				break;
 		}
-	}
+
+        CTEventManager.FireEvent(new ReEvaluateSurferEvent() { surfer = goCharacter, add = true });
+    }
 
 	public void OnJump(JumpEvent eventData)
 	{
