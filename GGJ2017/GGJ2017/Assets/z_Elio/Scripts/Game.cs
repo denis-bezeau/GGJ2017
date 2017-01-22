@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Game : MonoBehaviour
 {
@@ -129,6 +130,11 @@ public class Game : MonoBehaviour
 		colorList.Remove(eventData.surfer);
 		Characters.Remove(eventData.surfer);
 
+
+		if (Characters.Count == 0)
+		{
+			SceneManager.LoadScene("GameOver");
+		}
 		eventData.surfer.Kill();
 	}
 
