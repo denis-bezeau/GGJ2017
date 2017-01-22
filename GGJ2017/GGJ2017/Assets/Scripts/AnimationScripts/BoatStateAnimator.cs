@@ -7,7 +7,7 @@ public class BoatStateAnimator : MonoBehaviour
 
 	public SpriteRenderer BoatColor;
 
-	public GGJ2017GameManager.SURFBOARDCOLOR m_eColor;
+	private GGJ2017GameManager.SURFBOARDCOLOR m_eColor;
 
 	public bool m_bIsDead;
     
@@ -16,6 +16,7 @@ public class BoatStateAnimator : MonoBehaviour
 	    animator = GetComponent<Animator>();
 		animator.applyRootMotion = true;
 
+		m_eColor = (GGJ2017GameManager.SURFBOARDCOLOR)Random.Range(0, 2);
 		switch (m_eColor)
 		{
 			case GGJ2017GameManager.SURFBOARDCOLOR.RED: BoatColor.color = Color.red; break;
@@ -40,6 +41,21 @@ public class BoatStateAnimator : MonoBehaviour
 
 
 	void OnTriggerEnter2D(Collider2D collider)
+	{
+		Debug.Log("boat collision 1");
+		CharacterController character = collider.gameObject.GetComponent<CharacterController>();
+		if (character != null)
+		{
+			Debug.Log("boat collision 2");
+			if (character.m_scPlayerColor == m_eColor && character.IsWaving())
+			{
+				Debug.Log("boat collision 3");
+				Kill();
+			}
+		}
+	}
+
+	void OnTriggerStay2D(Collider2D collider)
 	{
 		Debug.Log("boat collision 1");
 		CharacterController character = collider.gameObject.GetComponent<CharacterController>();
