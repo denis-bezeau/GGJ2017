@@ -112,7 +112,7 @@ public class subWhaleScript : MonoBehaviour {
 		CharacterController character = collider.gameObject.GetComponent<CharacterController>();
 		if (character != null)
 		{
-			if (character.IsAttacking() == false)
+			if (character.IsAttacking() == false && character.m_iPlayerIndexForYourColor == 0)
 			{
 				Debug.Log("DeadlyTerrain::you triggered with character color");
 				CTEventManager.FireEvent(new KillSurferEvent() { surfer = character });

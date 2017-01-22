@@ -16,7 +16,7 @@ public class BoatStateAnimator : MonoBehaviour
 	    animator = GetComponent<Animator>();
 		animator.applyRootMotion = true;
 
-		m_eColor = (GGJ2017GameManager.SURFBOARDCOLOR)Random.Range(0, 2);
+		m_eColor = (GGJ2017GameManager.SURFBOARDCOLOR)Random.Range(0, 3);
 		switch (m_eColor)
 		{
 			case GGJ2017GameManager.SURFBOARDCOLOR.RED: BoatColor.color = Color.red; break;
