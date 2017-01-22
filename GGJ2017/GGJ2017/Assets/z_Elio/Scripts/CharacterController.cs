@@ -6,8 +6,8 @@ public class CharacterController : MonoBehaviour
 {
     private float JUMP_TIME_LIMIT = 1f;
 
-    private string MAIN_LOCATION = "Spawn";
-    private string JUMP_LOCATION = "OutOfWay";
+	private GameObject MAIN_LOCATION;
+	private GameObject JUMP_LOCATION;
 
     private GameObject particle;
     private KeyCode m_kcJumpKey = KeyCode.Alpha0;
@@ -39,24 +39,29 @@ public class CharacterController : MonoBehaviour
         m_kcJumpKey = jumpIn;
         m_iInstance = instanceIn;
 
-        m_cPlayerColor = Color.green;
-
+		switch (m_eColor)
+		{
+			case GGJ2017GameManager.SURFBOARDCOLOR.RED: m_cPlayerColor = Color.red; break;
+			case GGJ2017GameManager.SURFBOARDCOLOR.GREEN: m_cPlayerColor = Color.green; break;
+			case GGJ2017GameManager.SURFBOARDCOLOR.BLUE: m_cPlayerColor = Color.blue; break;
+			case GGJ2017GameManager.SURFBOARDCOLOR.YELLOW: m_cPlayerColor = Color.yellow; break;
+		}
         particle.GetComponent<ParticleSystem>().startColor = m_cPlayerColor;
         particle.GetComponent<ParticleSystem>().enableEmission = false;
     }
 
-    public void PositionCharacter(int totalCharacters)
+	public void PositionCharacter(GameObject destinationNode)
     {
-        if(totalCharacters == 1) //Hack
-        {
-            m_goTargetPosition = GameObject.Find("Spawn");
-        }
+		MAIN_LOCATION = destinationNode;
+		m_goTargetPosition = MAIN_LOCATION;
+		
     }
 
 	// Use this for initialization
-	void Start ()
+	void Awake ()
     {
-		
+		MAIN_LOCATION = Game.game.m_SpawningNodeBlue;
+		JUMP_LOCATION = Game.game.m_oJumpNode;
 	}
 	
     void FixedUpdate()
@@ -91,19 +96,23 @@ public class CharacterController : MonoBehaviour
 			CTEventManager.FireEvent(new JumpEvent() { color = m_eColor });
 		}
 
-		Vector3 AutoMovePosition = m_goTargetPosition.transform.position;
-		if (m_oFollowTarget != null)
-		{
-			AutoMovePosition = m_goTargetPosition.transform.position + Vector3.left * 5 * m_iPlayerIndexForYourColor; //be X guys behind the jump point
-		}
 
-		if (transform.position != AutoMovePosition)
+		if (m_goTargetPosition != null)
 		{
-			transform.position = Vector3.MoveTowards(transform.position, AutoMovePosition, m_fMoveSpeed);
-		}
-		else if(m_goTargetPosition == GameObject.Find(MAIN_LOCATION))
-		{
-			m_bJumping = false;
+			Vector3 AutoMovePosition = m_goTargetPosition.transform.position;
+			if (m_oFollowTarget != null)
+			{
+				AutoMovePosition = m_goTargetPosition.transform.position + Vector3.left * 5 * m_iPlayerIndexForYourColor; //be X guys behind the jump point
+			}
+
+			if (transform.position != AutoMovePosition)
+			{
+				transform.position = Vector3.MoveTowards(transform.position, AutoMovePosition, m_fMoveSpeed);
+			}
+			else if (m_goTargetPosition == MAIN_LOCATION)
+			{
+				m_bJumping = false;
+			}
 		}
 
 		if (m_bJumping)
@@ -141,27 +150,17 @@ public class CharacterController : MonoBehaviour
 
     private void GoToLane(bool bLane)
     {
-        string sLoc = "";
         switch (bLane)
         {
             default:
             case false:
-                sLoc = MAIN_LOCATION;
 				m_fJumpTimer = 0;
-				 if (GameObject.Find(sLoc) != m_goTargetPosition)
-				{
-					m_goTargetPosition = GameObject.Find(sLoc);
-				}
+				m_goTargetPosition = MAIN_LOCATION;
                 break;
             case true:
-                sLoc = JUMP_LOCATION;
                 m_bJumping = true;
 				m_fJumpTimer = 0;
-
-				if (GameObject.Find(sLoc) != m_goTargetPosition)
-				{
-					m_goTargetPosition = GameObject.Find(sLoc);
-				}
+				m_goTargetPosition = JUMP_LOCATION;
                 break;
         }
     }
@@ -174,7 +173,7 @@ public class CharacterController : MonoBehaviour
 
 	public bool IsCrouching()
 	{
-		return false;// m_bCrouching;
+		return false;
 	}
 
 	public bool IsJumping()
@@ -184,7 +183,6 @@ public class CharacterController : MonoBehaviour
 
 	public Vector2 GetVelocity()
 	{
-		//return rigidBody.velocity;
 		return Vector2.right * 100;
 	}
 
@@ -197,7 +195,7 @@ public class CharacterController : MonoBehaviour
 	public void SetFollowTarget(CharacterController followTarget)
 	{
 		m_oFollowTarget = followTarget;
-		m_goTargetPosition = GameObject.Find(MAIN_LOCATION);
+		m_goTargetPosition = MAIN_LOCATION;
 	}
 
 

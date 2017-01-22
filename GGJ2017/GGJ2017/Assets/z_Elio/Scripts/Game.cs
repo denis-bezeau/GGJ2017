@@ -24,6 +24,13 @@ public class Game : MonoBehaviour
 	public List<CharacterController> GreenCharacters = new List<CharacterController>();
 	public List<CharacterController> YellowCharacters = new List<CharacterController>();
 
+
+	public GameObject m_SpawningNodeBlue;
+	public GameObject m_SpawningNodeGreen;
+	public GameObject m_SpawningNodeRed;
+	public GameObject m_SpawningNodeYellow;
+	public GameObject m_oJumpNode;
+
     void Awake()
     {
         Debug.Log("Game: Awake:");
@@ -66,17 +73,28 @@ public class Game : MonoBehaviour
             Debug.Log("Game: Start: Loop: " + i);
             goCharacter = Instantiate(Resources.Load("Player")) as GameObject;
             cCharacterController = goCharacter.AddComponent<CharacterController>();
-            cCharacterController.CreateCharacterController((KeyCode)GetType().GetField("COLOR_" + (i + 1)).GetValue(this), i);
 			cCharacterController.m_eColor = (GGJ2017GameManager.SURFBOARDCOLOR)i;
+            cCharacterController.CreateCharacterController((KeyCode)GetType().GetField("COLOR_" + (i + 1)).GetValue(this), i);
 			Characters.Add(cCharacterController);
-            cCharacterController.PositionCharacter(charactersToCreate);
 
 			switch (cCharacterController.m_eColor)
 			{
-				case GGJ2017GameManager.SURFBOARDCOLOR.RED: RedCharacters.Add(cCharacterController); break;
-				case GGJ2017GameManager.SURFBOARDCOLOR.GREEN: GreenCharacters.Add(cCharacterController); break;
-				case GGJ2017GameManager.SURFBOARDCOLOR.BLUE: BlueCharacters.Add(cCharacterController); break;
-				case GGJ2017GameManager.SURFBOARDCOLOR.YELLOW: YellowCharacters.Add(cCharacterController); break;
+				case GGJ2017GameManager.SURFBOARDCOLOR.RED: 
+					RedCharacters.Add(cCharacterController);
+					cCharacterController.PositionCharacter(m_SpawningNodeRed);
+					break;
+				case GGJ2017GameManager.SURFBOARDCOLOR.GREEN: 
+					GreenCharacters.Add(cCharacterController);
+					cCharacterController.PositionCharacter(m_SpawningNodeGreen);
+					break;
+				case GGJ2017GameManager.SURFBOARDCOLOR.BLUE: 
+					BlueCharacters.Add(cCharacterController);
+					cCharacterController.PositionCharacter(m_SpawningNodeBlue);
+					break;
+				case GGJ2017GameManager.SURFBOARDCOLOR.YELLOW:
+					YellowCharacters.Add(cCharacterController);
+					cCharacterController.PositionCharacter(m_SpawningNodeYellow);
+					break;
 			}
         }
 		
@@ -93,12 +111,12 @@ public class Game : MonoBehaviour
 		GameObject goCharacter = Instantiate(Resources.Load("Player")) as GameObject;
 		CharacterController cCharacterController = goCharacter.AddComponent<CharacterController>();
 		cCharacterController.m_eColor = eventData.color;
-		cCharacterController.PositionCharacter(1);
 		Characters.Add(cCharacterController);
 
 		switch (eventData.color)
 		{
 			case GGJ2017GameManager.SURFBOARDCOLOR.RED:
+				cCharacterController.PositionCharacter(m_SpawningNodeRed);
 				if (RedCharacters.Count  > 0)
 				{
 					cCharacterController.SetFollowTarget(RedCharacters[RedCharacters.Count-1]);
@@ -108,7 +126,8 @@ public class Game : MonoBehaviour
 				RedCharacters.Add(cCharacterController);
 				cCharacterController.CreateCharacterController(KeyCode.A, RedCharacters.Count);
 				break;
-			case GGJ2017GameManager.SURFBOARDCOLOR.GREEN:  
+			case GGJ2017GameManager.SURFBOARDCOLOR.GREEN:
+				cCharacterController.PositionCharacter(m_SpawningNodeGreen);
 				if (GreenCharacters.Count > 0)
 				{
 					cCharacterController.SetFollowTarget(GreenCharacters[GreenCharacters.Count - 1]);
@@ -118,7 +137,8 @@ public class Game : MonoBehaviour
 				GreenCharacters.Add(cCharacterController);
 				cCharacterController.CreateCharacterController(KeyCode.A, GreenCharacters.Count);
 				break;
-			case GGJ2017GameManager.SURFBOARDCOLOR.BLUE:  
+			case GGJ2017GameManager.SURFBOARDCOLOR.BLUE:
+				cCharacterController.PositionCharacter(m_SpawningNodeBlue);
 				if (BlueCharacters.Count > 0)
 				{
 					cCharacterController.SetFollowTarget(BlueCharacters[BlueCharacters.Count - 1]);
@@ -128,7 +148,8 @@ public class Game : MonoBehaviour
 				BlueCharacters.Add(cCharacterController);
 				cCharacterController.CreateCharacterController(KeyCode.A, BlueCharacters.Count);
 				break;
-			case GGJ2017GameManager.SURFBOARDCOLOR.YELLOW:  
+			case GGJ2017GameManager.SURFBOARDCOLOR.YELLOW:
+				cCharacterController.PositionCharacter(m_SpawningNodeYellow);
 				if (YellowCharacters.Count > 0)
 				{
 					cCharacterController.SetFollowTarget(YellowCharacters[YellowCharacters.Count - 1]);
