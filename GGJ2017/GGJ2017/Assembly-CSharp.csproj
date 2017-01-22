@@ -46,6 +46,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\DeadlyTerrain.cs" />
+     <Compile Include="Assets\GGJ2017GameManager.cs" />
      <Compile Include="Assets\Scripts\AnimationScripts\CharacterStateAnimator.cs" />
      <Compile Include="Assets\Scripts\Art Scripts\ParallaxWave.cs" />
      <Compile Include="Assets\Scripts\Art Scripts\WaveRoller.cs" />
@@ -55,8 +57,10 @@
      <Compile Include="Assets\Scripts\EventSystem\example\EventSystemTest.cs" />
      <Compile Include="Assets\Scripts\Sound\ExampleScene\SoundSystemTest.cs" />
      <Compile Include="Assets\Scripts\Sound\SoundManager.cs" />
+     <Compile Include="Assets\ScrollingWorldItem.cs" />
      <Compile Include="Assets\SurfboardColorMasker.cs" />
      <Compile Include="Assets\SurfboardUIManager.cs" />
+     <Compile Include="Assets\SurferUpBG.cs" />
      <Compile Include="Assets\gg2016 REFERENCE\FishSpawner.cs" />
      <Compile Include="Assets\gg2016 REFERENCE\Meteor.cs" />
      <Compile Include="Assets\gg2016 REFERENCE\MeteorSpawner.cs" />
@@ -71,6 +75,9 @@
      <Compile Include="Assets\gg2016 REFERENCE\Scripts\MovingPlatform.cs" />
      <Compile Include="Assets\gg2016 REFERENCE\Scripts\Parralax.cs" />
      <Compile Include="Assets\gg2016 REFERENCE\mainmenu.cs" />
+     <Compile Include="Assets\z_Elio\Scripts\CharacterController.cs" />
+     <Compile Include="Assets\z_Elio\Scripts\Game.cs" />
+     <Compile Include="Assets\z_Elio\Scripts\Player.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>E:/Unity5/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

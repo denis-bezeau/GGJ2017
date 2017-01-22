@@ -26,29 +26,16 @@ public class SurferUpBG : MonoBehaviour {
 		BackgroundSprite.transform.Rotate(Vector3.forward, m_fRotationSpeed * Time.deltaTime);
 	}
 
-	void OnCollisionEnter2D(Collision2D collider)
-	{
-		Debug.Log("SurferUp::you collided with " + collider.gameObject.name);
-		CharacterController character = collider.gameObject.GetComponent<CharacterController>();
-		if (character != null)
-		{
-			Debug.Log("SurferUp::you collided with character color");
-			CTEventManager.FireEvent(new SurferUpEvent() { color = m_eColor });
-			DestroyObject(gameObject);
-		}
-
-	}
-
-
 	void OnTriggerEnter2D(Collider2D collider)
 	{
-		Debug.Log("SurferUp::you triggered with " + collider.gameObject.name);
 		CharacterController character = collider.gameObject.GetComponent<CharacterController>();
 		if(character != null)
 		{
-			Debug.Log("SurferUp::you triggered with character color" );
-			CTEventManager.FireEvent(new SurferUpEvent() { color = m_eColor });
-			DestroyObject(gameObject);
+			if (character.m_eColor == m_eColor)
+			{
+				CTEventManager.FireEvent(new SurferUpEvent() { color = m_eColor });
+				DestroyObject(gameObject);
+			}
 		}
 	}
 }

@@ -22,5 +22,6 @@ public class CharacterStateAnimator : MonoBehaviour
 		animator.SetFloat("MomentumX", characterController.GetVelocity().x);
 		animator.SetFloat("MomentumY", characterController.GetVelocity().y);
         animator.SetBool("Jumping", characterController.IsJumping());
+		//animator.SetBool("IsDead", characterController.m_bIsDead);
     }
 }

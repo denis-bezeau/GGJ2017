@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class Game : MonoBehaviour
 {
-    public static KeyCode COLOR_1 = KeyCode.A;
-    public static KeyCode COLOR_2 = KeyCode.S;
-    public static KeyCode COLOR_3 = KeyCode.D;
+    public static KeyCode RED_BUTTON = KeyCode.D;
+    public static KeyCode BLUE_BUTTON = KeyCode.A;
+    public static KeyCode GREEN_BUTTON = KeyCode.S;
+	public static KeyCode YELLOW_BUTTON = KeyCode.W;
 
     public static int SINGLE_PLAYER_GAME = 0;
     public static int MULTI_PLAYER_GAME = 1;
 
     public static int SP_STARTING_WAVES = 1;
-    public static int MP_STARTING_WAVES = 3;
+    public static int MP_STARTING_WAVES = 4;
 
     public static Game game;
 
@@ -45,14 +46,15 @@ public class Game : MonoBehaviour
             Debug.Log("Game: Awake: game is not null destroy this instance");
             Destroy(this.gameObject);
         }
-
 		CTEventManager.AddListener<SpawnNewSurferEvent>(OnSpawnNewSurfer);
+		CTEventManager.AddListener<KillSurferEvent>(OnKillSurfer);
 		CTEventManager.AddListener<JumpEvent>(OnJump);
     }
 
 	public void OnDestroy()
 	{
 		CTEventManager.RemoveListener<SpawnNewSurferEvent>(OnSpawnNewSurfer);
+		CTEventManager.RemoveListener<KillSurferEvent>(OnKillSurfer);
 		CTEventManager.RemoveListener<JumpEvent>(OnJump);
 	}
 
@@ -74,36 +76,61 @@ public class Game : MonoBehaviour
             goCharacter = Instantiate(Resources.Load("Player")) as GameObject;
             cCharacterController = goCharacter.AddComponent<CharacterController>();
 			cCharacterController.m_eColor = (GGJ2017GameManager.SURFBOARDCOLOR)i;
-            cCharacterController.CreateCharacterController((KeyCode)GetType().GetField("COLOR_" + (i + 1)).GetValue(this), i);
 			Characters.Add(cCharacterController);
 
 			switch (cCharacterController.m_eColor)
 			{
 				case GGJ2017GameManager.SURFBOARDCOLOR.RED: 
 					RedCharacters.Add(cCharacterController);
+					cCharacterController.CreateCharacterController(RED_BUTTON, i);
 					cCharacterController.PositionCharacter(m_SpawningNodeRed);
 					break;
 				case GGJ2017GameManager.SURFBOARDCOLOR.GREEN: 
 					GreenCharacters.Add(cCharacterController);
+					cCharacterController.CreateCharacterController(GREEN_BUTTON, i);
 					cCharacterController.PositionCharacter(m_SpawningNodeGreen);
 					break;
 				case GGJ2017GameManager.SURFBOARDCOLOR.BLUE: 
 					BlueCharacters.Add(cCharacterController);
+					cCharacterController.CreateCharacterController(BLUE_BUTTON, i);
 					cCharacterController.PositionCharacter(m_SpawningNodeBlue);
 					break;
 				case GGJ2017GameManager.SURFBOARDCOLOR.YELLOW:
 					YellowCharacters.Add(cCharacterController);
+					cCharacterController.CreateCharacterController(YELLOW_BUTTON, i);
 					cCharacterController.PositionCharacter(m_SpawningNodeYellow);
 					break;
 			}
-        }
+		}
 		
 	}
+
+	public List<CharacterController> GetColorList(GGJ2017GameManager.SURFBOARDCOLOR color)
+	{
+		switch (color)
+		{
+			case GGJ2017GameManager.SURFBOARDCOLOR.RED:		return RedCharacters;
+			case GGJ2017GameManager.SURFBOARDCOLOR.GREEN:	return GreenCharacters; 
+			case GGJ2017GameManager.SURFBOARDCOLOR.BLUE:	return BlueCharacters;
+			case GGJ2017GameManager.SURFBOARDCOLOR.YELLOW:	return YellowCharacters;
+		}
+
+		return null;
+	}
 	
-	// Update is called once per frame
-	void Update ()
-    {
+	public void OnKillSurfer(KillSurferEvent eventData)
+	{
+		List<CharacterController> colorList = GetColorList(eventData.surfer.m_eColor);
 		
+		for (int i = eventData.surfer.m_iPlayerIndexForYourColor; i < colorList.Count; i++)
+		{
+			colorList[i].m_iPlayerIndexForYourColor--;
+		}
+
+		colorList.Remove(eventData.surfer);
+		Characters.Remove(eventData.surfer);
+
+		eventData.surfer.Kill();
 	}
 
 	public void OnSpawnNewSurfer(SpawnNewSurferEvent eventData)
@@ -124,7 +151,7 @@ public class Game : MonoBehaviour
 				
 				cCharacterController.m_iPlayerIndexForYourColor = (RedCharacters.Count);
 				RedCharacters.Add(cCharacterController);
-				cCharacterController.CreateCharacterController(KeyCode.A, RedCharacters.Count);
+				cCharacterController.CreateCharacterController(RED_BUTTON, RedCharacters.Count);
 				break;
 			case GGJ2017GameManager.SURFBOARDCOLOR.GREEN:
 				cCharacterController.PositionCharacter(m_SpawningNodeGreen);
@@ -135,7 +162,7 @@ public class Game : MonoBehaviour
 
 				cCharacterController.m_iPlayerIndexForYourColor = (GreenCharacters.Count);
 				GreenCharacters.Add(cCharacterController);
-				cCharacterController.CreateCharacterController(KeyCode.A, GreenCharacters.Count);
+				cCharacterController.CreateCharacterController(GREEN_BUTTON, GreenCharacters.Count);
 				break;
 			case GGJ2017GameManager.SURFBOARDCOLOR.BLUE:
 				cCharacterController.PositionCharacter(m_SpawningNodeBlue);
@@ -146,7 +173,7 @@ public class Game : MonoBehaviour
 
 				cCharacterController.m_iPlayerIndexForYourColor = (BlueCharacters.Count);
 				BlueCharacters.Add(cCharacterController);
-				cCharacterController.CreateCharacterController(KeyCode.A, BlueCharacters.Count);
+				cCharacterController.CreateCharacterController(BLUE_BUTTON, BlueCharacters.Count);
 				break;
 			case GGJ2017GameManager.SURFBOARDCOLOR.YELLOW:
 				cCharacterController.PositionCharacter(m_SpawningNodeYellow);
@@ -157,7 +184,7 @@ public class Game : MonoBehaviour
 
 				cCharacterController.m_iPlayerIndexForYourColor = (YellowCharacters.Count);
 				YellowCharacters.Add(cCharacterController);
-				cCharacterController.CreateCharacterController(KeyCode.A, YellowCharacters.Count);
+				cCharacterController.CreateCharacterController(YELLOW_BUTTON, YellowCharacters.Count);
 				break;
 		}
 	}

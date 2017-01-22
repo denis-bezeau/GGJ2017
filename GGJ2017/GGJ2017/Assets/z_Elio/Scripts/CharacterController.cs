@@ -1,10 +1,14 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
 
 //Input Control
 //Collision control
 public class CharacterController : MonoBehaviour
 {
     private float JUMP_TIME_LIMIT = 1f;
+	private float DEATH_TIMER = 2;
 
 	private GameObject MAIN_LOCATION;
 	private GameObject JUMP_LOCATION;
@@ -27,6 +31,8 @@ public class CharacterController : MonoBehaviour
     private bool m_bResting = true;
 
 	public bool m_bYielding = false;
+
+	public bool m_bIsDead = false;
 
     private Color m_cPlayerColor;
 	public CharacterController m_oFollowTarget;
@@ -68,6 +74,18 @@ public class CharacterController : MonoBehaviour
     {
 
     }
+
+	public void Kill()
+	{
+		m_bIsDead = true;
+		StartCoroutine(DieInXSeconds(DEATH_TIMER));
+	}
+
+	private IEnumerator DieInXSeconds(float time)
+	{
+		yield return new WaitForSeconds(time);
+		Destroy(gameObject);
+	}
 
 	// Update is called once per frame
 	void Update ()
