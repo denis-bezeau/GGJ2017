@@ -24,6 +24,8 @@ public class CharacterController : MonoBehaviour
     private bool m_bJumping = false;
     private bool m_bResting = true;
 
+    private Color m_cPlayerColor;
+
     public void CreateCharacterController(KeyCode jumpIn, int instanceIn)
     {
         particle = Instantiate(Resources.Load("Particle")) as GameObject;
@@ -31,6 +33,11 @@ public class CharacterController : MonoBehaviour
 
         m_kcJumpKey = jumpIn;
         m_iInstance = instanceIn;
+
+        m_cPlayerColor = Color.green;
+
+        particle.GetComponent<ParticleSystem>().startColor = m_cPlayerColor;
+        particle.GetComponent<ParticleSystem>().enableEmission = false;
     }
 
     public void PositionCharacter(int totalCharacters)
@@ -56,22 +63,38 @@ public class CharacterController : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        Debug.Log("CharacterController: Update:");
-        ParticleMotion();
+        //Debug.Log("CharacterController: Update:");
+        if(m_bJumping)
+        {
+            if(!particle.GetComponent<ParticleSystem>().emission.enabled)
+            {
+                particle.GetComponent<ParticleSystem>().enableEmission = true;
+            }
+            ParticleMotion();
+        }
+        else if (!m_bJumping && particle.GetComponent<ParticleSystem>().emission.enabled)
+        {
+            particle.GetComponent<ParticleSystem>().enableEmission = false;
+        }
 
         if (m_kcJumpKey != KeyCode.Alpha0)
         {
-            Debug.Log("CharacterController: Update: " + m_iInstance + ": jump");
+            //pressing button
             bool bJumpInput = Input.GetKey(m_kcJumpKey);
 
-            if (m_bJumping && m_bResting)
+            //At apex of jump
+            if (m_bJumping)
             {
-                m_fJumpTimer += Time.deltaTime;
-                Debug.Log("CharacterController: Update: m_fJumpTimer: " + m_fJumpTimer);
+                if(m_bResting)
+                {
+                    m_fJumpTimer += Time.deltaTime;
+                    //Debug.Log("CharacterController: Update: m_fJumpTimer: " + m_fJumpTimer);
+                }
 
+                //Met limit of time in air
                 if (m_fJumpTimer > JUMP_TIME_LIMIT)
                 {
-                    Debug.Log("CharacterController: Update: reset timer");
+                    //Debug.Log("CharacterController: Update: reset timer");
                     bJumpInput = false;
                 }
             }
@@ -82,6 +105,7 @@ public class CharacterController : MonoBehaviour
         if (transform.position != m_goTargetPosition.transform.position)
         {
             transform.position = Vector3.MoveTowards(transform.position, m_goTargetPosition.transform.position, m_fMoveSpeed);
+            m_bResting = false;
         }
         else if(!m_bResting)
         {
@@ -91,29 +115,14 @@ public class CharacterController : MonoBehaviour
         if (m_bJumping && m_bResting)
         {
             m_fJumpTimer += Time.deltaTime;
-            Debug.Log("CharacterController: Update: m_fJumpTimer: " + m_fJumpTimer);
+            //Debug.Log("CharacterController: Update: m_fJumpTimer: " + m_fJumpTimer);
             if (m_fJumpTimer > JUMP_TIME_LIMIT)
             {
-                Debug.Log("CharacterController: Update: reset timer");
+                //Debug.Log("CharacterController: Update: reset timer");
                 GoToLane(!m_bJumping);
             }
         }
 	}
-
-    void OnTriggerEnter2D(Collider2D col)
-    {
-        Debug.Log("TRIGGERED O_O");
-    }
-
-    void OnTriggerStay2D(Collider2D col)
-    {
-
-    }
-
-    void OnTriggerExit2D(Collider2D col)
-    {
-
-    }
 
     private void GoToLane(bool bLane)
     {
@@ -133,11 +142,10 @@ public class CharacterController : MonoBehaviour
         {
             if(GameObject.Find(sLoc) != m_goTargetPosition)
             {
-                m_bResting = false;
                 m_goTargetPosition = GameObject.Find(sLoc);
             }
 
-            if(!bLane && GameObject.Find(sLoc) == m_goTargetPosition)
+            if(!bLane && GameObject.Find(sLoc).transform.position == gameObject.transform.position)
             {
                 m_bJumping = false;
                 m_fJumpTimer = 0;
@@ -167,6 +175,11 @@ public class CharacterController : MonoBehaviour
 		return Vector2.right * 100;
 	}
 
+    public Color GetColor()
+    {
+        Debug.Log("CharacterController: GetColor: " + m_cPlayerColor);
+        return m_cPlayerColor;
+    }
 
     /*
     public void CreateParticles()
