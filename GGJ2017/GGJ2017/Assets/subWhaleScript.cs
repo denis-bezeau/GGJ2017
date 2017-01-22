@@ -52,7 +52,7 @@ public class subWhaleScript : MonoBehaviour {
 		Meteor meteor = newGO.GetComponent<Meteor>();
 		if (meteor)
 		{
-			meteor.color = (GGJ2017GameManager.SURFBOARDCOLOR)Random.Range(0, 2);
+			meteor.color = (GGJ2017GameManager.SURFBOARDCOLOR)Random.Range(0, 3);
 			meteor.direction = (1 + Random.Range(0, 5)) * Vector3.left + Vector3.down * Random.Range(0, 4);
 		}
 	}
@@ -64,7 +64,7 @@ public class subWhaleScript : MonoBehaviour {
 		Meteor meteor = newGO.GetComponent<Meteor>();
 		if (meteor)
 		{
-			meteor.color = (GGJ2017GameManager.SURFBOARDCOLOR)Random.Range(0, 2);
+			meteor.color = (GGJ2017GameManager.SURFBOARDCOLOR)Random.Range(0, 3);
 			meteor.direction = (1 + Random.Range(0, 6))*Vector3.left + Vector3.down * Random.Range(0, 4);
 		}
 	}
@@ -76,7 +76,7 @@ public class subWhaleScript : MonoBehaviour {
 		Meteor meteor = newGO.GetComponent<Meteor>();
 		if (meteor)
 		{
-			meteor.color = (GGJ2017GameManager.SURFBOARDCOLOR)Random.Range(0, 2);
+			meteor.color = (GGJ2017GameManager.SURFBOARDCOLOR)Random.Range(0, 3);
 			meteor.direction = (1 + Random.Range(0, 6)) * Vector3.left + Vector3.down * Random.Range(0, 4);
 		}
 	}
@@ -100,7 +100,7 @@ public class subWhaleScript : MonoBehaviour {
 		Meteor meteor = newGO.GetComponent<Meteor>();
 		if (meteor)
 		{
-			meteor.color = (GGJ2017GameManager.SURFBOARDCOLOR)Random.Range(0, 2);
+			meteor.color = (GGJ2017GameManager.SURFBOARDCOLOR)Random.Range(0, 3);
 			meteor.direction = (Random.Range(1, 7)) * Vector3.left + Vector3.down * (-2 + Random.Range(0, 6));
 		}
 	}

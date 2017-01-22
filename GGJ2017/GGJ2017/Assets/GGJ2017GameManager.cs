@@ -78,11 +78,13 @@ public class GGJ2017GameManager : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-		instance = this;
+		
     }
 
 	public void Awake()
 	{
+		instance = this;
+
         m_dSurfboardColorToColor.Clear();
         m_dSurfboardColorToColor.Add(SURFBOARDCOLOR.BLUE, Color.blue);
         m_dSurfboardColorToColor.Add(SURFBOARDCOLOR.RED, Color.red);
