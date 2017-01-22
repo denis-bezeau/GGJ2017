@@ -63,12 +63,13 @@ public class subWhaleScript : MonoBehaviour {
 
 	public void OnWhale1TransitionOutComplete()
 	{
+		Debug.Log("OnWhale1TransitionOutComplete");
 		m_oBossScript.OnWhale1TransitionOutComplete();
 	}
 
 	public void OnWhat2TransitionInCommplete()
 	{
-
+		Debug.Log("OnWhat2TransitionInCommplete");
 	}
 
 	public void OnBeamAttack()

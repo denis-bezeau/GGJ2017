@@ -57,7 +57,7 @@ public class ParallaxWave : MonoBehaviour
 	{
 		foreach (WaveRow waveRow in waveRows)
 		{
-			if (waveRow.transform.localPosition.x + waveRow.GetWidth() < ScreenMinX)
+			if (waveRow.transform.localPosition.x < ScreenMinX)
 			{
 				float fFarRight = 0;
 				foreach (WaveRow variablename in waveRows)

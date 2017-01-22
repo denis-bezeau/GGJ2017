@@ -10,7 +10,6 @@ public class Boss : MonoBehaviour
     private const int MAX_HITS_V2 = 3;
     private const int BOSS_MODE_V1 = 0;
     private const int BOSS_MODE_V2 = 1;
-    private const int BOSS_MODE_V3 = 2;
 
     private static int ATTACK_RAM = 0;
     private static int ATTACK_PROJECTILE = 1;
@@ -18,16 +17,18 @@ public class Boss : MonoBehaviour
 
     public GameObject m_goMode1;
     public GameObject m_goMode2;
-    public GameObject m_goMode3;
-    public int m_iMode = BOSS_MODE_V1;
+    private int m_iMode = BOSS_MODE_V1;
     private int m_iCurrentLife = MAX_HITS_V1;
     private int m_iAttackMode;
 
-	public bool m_bUseRamAttack;
-	public bool m_bUseSpellAttack;
+	public bool m_bAttackPlayer;
+	public bool m_bTakeAHit;
 
 	private Animator m_AnimatorWhale1;
 	private Animator m_AnimatorWhale2;
+
+	private float m_fInvinvibleTimer = 0.0f;
+	private float INVINCIBLE_TIME = 2.0f;
 
     // Use this for initialization
     void Start ()
@@ -39,48 +40,62 @@ public class Boss : MonoBehaviour
 		{
 			m_goMode1.SetActive(true);
 			m_goMode2.SetActive(false);
-			m_goMode3.SetActive(false);
 		}
 		else if (m_iMode == BOSS_MODE_V2)
 		{
 			m_goMode1.SetActive(false);
 			m_goMode2.SetActive(true);
-			m_goMode3.SetActive(false);
 		}
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-		if (m_bUseRamAttack)
+		m_fInvinvibleTimer -= Time.deltaTime;
+		if (m_fInvinvibleTimer < 0.0f) m_fInvinvibleTimer = 0.0f;
+
+		if (m_bAttackPlayer)
 		{
 			AttackPlayer();
-			m_bUseRamAttack = false;
+			m_bAttackPlayer = false;
 		}
 
-		if (m_bUseSpellAttack)
+		if (m_bTakeAHit)
 		{
-			AttackPlayer();
-			m_bUseSpellAttack = false;
+			TakeAHit();
+			m_bTakeAHit = false;
 		}
 	}
 
+
     private void TakeAHit()
     {
+		if (m_fInvinvibleTimer > 0 || m_iCurrentLife < 0)
+		{
+			Debug.Log("Boss::TakeAHit() early return");
+			return;
+		}
+
+
         --m_iCurrentLife;
+
+		Debug.Log("Boss::TakeAHit() new life total == " + m_iCurrentLife);
+		m_fInvinvibleTimer = INVINCIBLE_TIME;
+		//set invincibility timer
 
         if(m_iCurrentLife < 1)
         {
             switch (m_iMode)
             {
                 default:
+					Debug.Log("Boss::TakeAHit() default do nothing");
                     break;
                 case BOSS_MODE_V1:
+					Debug.Log("Boss::TakeAHit() play transition out anim");
 					m_AnimatorWhale1.SetTrigger("TransitionOut");
                     break;
                 case BOSS_MODE_V2:
-                    m_iMode = BOSS_MODE_V3; //Dead mode
-                    m_goMode3.SetActive(true);
+					m_AnimatorWhale2.SetTrigger("Die");
                     break;
             }
         }
@@ -88,9 +103,11 @@ public class Boss : MonoBehaviour
 
 	public void OnWhale1TransitionOutComplete()
 	{
+		Debug.Log("Boss::OnWhale1TransitionOutComplete()"); 
 		m_goMode1.SetActive(false);
 		m_goMode2.SetActive(true);
 		m_iMode = BOSS_MODE_V2;
+		m_iCurrentLife = MAX_HITS_V2;
 		m_AnimatorWhale2.SetTrigger("TransformIn");
 	}
 
@@ -126,7 +143,7 @@ public class Boss : MonoBehaviour
         Debug.Log("TRIGGERED O_O");
         if (col.gameObject.tag == PLAYER_ATTACK_TAG)
         {
-            //Take a hit
+			TakeAHit();
         }
     }
 
