@@ -19,20 +19,50 @@ public class Boss : MonoBehaviour
     public GameObject m_goMode1;
     public GameObject m_goMode2;
     public GameObject m_goMode3;
-    private int m_iMode = BOSS_MODE_V1;
+    public int m_iMode = BOSS_MODE_V1;
     private int m_iCurrentLife = MAX_HITS_V1;
     private int m_iAttackMode;
+
+	public bool m_bUseRamAttack;
+	public bool m_bUseSpellAttack;
+
+	private Animator m_AnimatorWhale1;
+	private Animator m_AnimatorWhale2;
 
     // Use this for initialization
     void Start ()
     {
-		
+		m_AnimatorWhale1 = m_goMode1.GetComponent<Animator>();
+		m_AnimatorWhale2 = m_goMode2.GetComponent<Animator>();
+
+		if (m_iMode == BOSS_MODE_V1)
+		{
+			m_goMode1.SetActive(true);
+			m_goMode2.SetActive(false);
+			m_goMode3.SetActive(false);
+		}
+		else if (m_iMode == BOSS_MODE_V2)
+		{
+			m_goMode1.SetActive(false);
+			m_goMode2.SetActive(true);
+			m_goMode3.SetActive(false);
+		}
 	}
 	
 	// Update is called once per frame
 	void Update ()
     {
-		
+		if (m_bUseRamAttack)
+		{
+			AttackPlayer();
+			m_bUseRamAttack = false;
+		}
+
+		if (m_bUseSpellAttack)
+		{
+			AttackPlayer();
+			m_bUseSpellAttack = false;
+		}
 	}
 
     private void TakeAHit()
@@ -41,17 +71,12 @@ public class Boss : MonoBehaviour
 
         if(m_iCurrentLife < 1)
         {
-            m_goMode1.SetActive(false);
-            m_goMode2.SetActive(false);
-            m_goMode3.SetActive(false);
-
             switch (m_iMode)
             {
                 default:
                     break;
                 case BOSS_MODE_V1:
-                    m_iMode = BOSS_MODE_V2;
-                    m_goMode2.SetActive(true);
+					m_AnimatorWhale1.SetTrigger("TransitionOut");
                     break;
                 case BOSS_MODE_V2:
                     m_iMode = BOSS_MODE_V3; //Dead mode
@@ -61,6 +86,14 @@ public class Boss : MonoBehaviour
         }
     }
 
+	public void OnWhale1TransitionOutComplete()
+	{
+		m_goMode1.SetActive(false);
+		m_goMode2.SetActive(true);
+		m_iMode = BOSS_MODE_V2;
+		m_AnimatorWhale2.SetTrigger("TransformIn");
+	}
+
     private void AttackPlayer()
     {
         switch (m_iMode)
@@ -69,12 +102,24 @@ public class Boss : MonoBehaviour
                 break;
             case BOSS_MODE_V1:
                 m_iAttackMode = ATTACK_RAM;
+				m_AnimatorWhale1.SetBool("IsRamming", true);
+				
                 break;
             case BOSS_MODE_V2:
                 m_iAttackMode = Random.Range(ATTACK_RAM, ATTACK_LAZER);
+				if (m_iAttackMode == ATTACK_RAM)
+				{
+					m_AnimatorWhale2.SetBool("IsCasting", true);
+				}
+				else
+				{
+					m_AnimatorWhale2.SetBool("IsChargingUp", true);
+				}
                 break;
         }
     }
+
+
 
     void OnTriggerEnter2D(Collider2D col)
     {
