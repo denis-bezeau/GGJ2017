@@ -131,6 +131,7 @@ public class Game : MonoBehaviour
 	public void OnSpawnNewSurfer(SpawnNewSurferEvent eventData)
 	{
 		GameObject goCharacter = Instantiate(Resources.Load("Player")) as GameObject;
+        Destroy(goCharacter.GetComponent<Collider2D>());
 		CharacterController cCharacterController = goCharacter.AddComponent<CharacterController>();
 		cCharacterController.m_scPlayerColor = eventData.color;
 		Characters.Add(cCharacterController);

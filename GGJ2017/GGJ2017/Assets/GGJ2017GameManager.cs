@@ -168,9 +168,9 @@ public class GGJ2017GameManager : MonoBehaviour
 	{
 		switch (eventData.color)
 		{
-			case SURFBOARDCOLOR.BLUE: Debug.Log("spawn BLUE surger"); break;
-			case SURFBOARDCOLOR.GREEN: Debug.Log("spawn GREEN surger"); break;
-			case SURFBOARDCOLOR.RED: Debug.Log("spawn RED surger"); break;
+			case SURFBOARDCOLOR.BLUE: Debug.Log("spawn BLUE surfer"); break;
+			case SURFBOARDCOLOR.GREEN: Debug.Log("spawn GREEN surfer"); break;
+			case SURFBOARDCOLOR.RED: Debug.Log("spawn RED surfer"); break;
             default: break;
 		}
 

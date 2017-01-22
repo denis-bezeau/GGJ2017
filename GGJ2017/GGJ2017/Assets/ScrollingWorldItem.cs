@@ -5,7 +5,7 @@ using UnityEngine;
 public class ScrollingWorldItem : MonoBehaviour
 {
 
-    private float m_fScrollSpeed = GGJ2017GameManager.GetInstance().GetGlobalScrollSpeed();
+    private float m_fScrollSpeed = 0f;
 
     // Use this for initialization
     void Start () {
